@@ -6,12 +6,12 @@ import Header from "@/app/_components/Header/header";
 export default function AdminScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [admins, setAdmins] = useState([
-    { name: "Admin 1", email: "admin1@example.com" },
-    { name: "Admin 2", email: "admin2@example.com" },
-    { name: "Admin 3", email: "admin3@example.com" },
+    { id: 1, name: "Admin 1", email: "admin1@example.com" },
+    { id: 2, name: "Admin 2", email: "admin2@example.com" },
+    { id: 3, name: "Admin 3", email: "admin3@example.com" },
   ]);
 
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "" });
+  const [newAdmin, setNewAdmin] = useState({ id: "", name: "", email: "" });
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -23,14 +23,15 @@ export default function AdminScreen() {
   };
 
   const addAdmin = () => {
-    setAdmins((prev) => [...prev, newAdmin]);
-    setNewAdmin({ name: "", email: "" });
+    const newId = admins.length + 1;
+    setAdmins((prev) => [...prev, { ...newAdmin, id: newId }]);
+    setNewAdmin({ id: "", name: "", email: "" });
     toggleModal();
   };
 
   return (
     <div>
-      <Header title="Lista de" block="Adminstradores" className="" />
+      <Header title="Lista de" block="Administradores" className="" />
 
       <div className="mt-8 px-[70]">
         <div className="flex justify-between items-center mb-4">
@@ -46,6 +47,9 @@ export default function AdminScreen() {
           <thead>
             <tr className="bg-[#00BB83] text-white">
               <th className="border border-gray-300 px-4 py-2 rounded-tl-md text-left animate__animated animate__fadeIn">
+                ID
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
                 Nome
               </th>
               <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
@@ -60,16 +64,19 @@ export default function AdminScreen() {
             {admins.map((admin, index) => (
               <tr key={index} className="hover:bg-gray-50 animate__animated animate__fadeIn animate__delay-3s">
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                  {admin.id}
+                </td>
+                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
                   {admin.name}
                 </td>
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
                   {admin.email}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2 text-center">
-                  <button className="text-[#00BB83] hover:text-[#00BB83] mx-2">
+                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2 text-center flex justify-center items-center space-x-2">
+                  <button className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center">
                     <span className="material-icons">edit</span>
                   </button>
-                  <button className="text-red-600 hover:text-red-800">
+                  <button className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center">
                     <span className="material-icons">delete</span>
                   </button>
                 </td>
@@ -84,6 +91,21 @@ export default function AdminScreen() {
           <div className="bg-white p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
             <h3 className="text-lg font-bold mb-4">Adicionar Administrador</h3>
             <form>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1" htmlFor="id">
+                  ID
+                </label>
+                <input
+                  type="number"
+                  id="id"
+                  name="id"
+                  value={newAdmin.id}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Digite o ID"
+                  required
+                />
+              </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1" htmlFor="name">
                   Nome

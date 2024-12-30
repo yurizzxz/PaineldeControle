@@ -6,16 +6,20 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   useEffect(() => {
-    const savedState = localStorage.getItem("sidebarState");
-    if (savedState !== null) {
-      setIsCollapsed(savedState === "true");
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("sidebarState");
+      if (savedState !== null) {
+        setIsCollapsed(savedState === "true");
+      }
     }
   }, []);
 
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    localStorage.setItem("sidebarState", newState.toString());
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sidebarState", newState.toString());
+    }
   };
 
   return (
@@ -78,6 +82,24 @@ export default function Sidebar() {
               {!isCollapsed && <span>Home</span>}
             </a>
           </li>
+          <li>
+            <a
+              href="/gyms"
+              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              aria-label="Gyms"
+            >
+              <span
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
+                style={{ fontSize: "30px" }}
+              >
+                fitness_center
+              </span>
+              {!isCollapsed && <span>Gyms</span>}
+            </a>
+          </li>
+
           <li>
             <a
               href="/admins"

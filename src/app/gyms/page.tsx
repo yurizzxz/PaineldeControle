@@ -3,15 +3,34 @@
 import { useState } from "react";
 import Header from "@/app/_components/Header/header";
 
-export default function AdminScreen() {
+export default function AcademiaScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [admins, setAdmins] = useState([
-    { name: "Admin 1", email: "admin1@example.com" },
-    { name: "Admin 2", email: "admin2@example.com" },
-    { name: "Admin 3", email: "admin3@example.com" },
+  const [academias, setAcademias] = useState([
+    {
+      id: 1,
+      name: "Academia 1",
+      owner: "João",
+      ownerEmail: "joao@example.com",
+    },
+    {
+      id: 2,
+      name: "Academia 2",
+      owner: "Maria",
+      ownerEmail: "maria@example.com",
+    },
+    {
+      id: 3,
+      name: "Academia 3",
+      owner: "Pedro",
+      ownerEmail: "pedro@example.com",
+    },
   ]);
 
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "" });
+  const [newAcademia, setNewAcademia] = useState({
+    name: "",
+    owner: "",
+    ownerEmail: "",
+  });
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -19,18 +38,21 @@ export default function AdminScreen() {
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
-    setNewAdmin((prev) => ({ ...prev, [name]: value }));
+    setNewAcademia((prev) => ({ ...prev, [name]: value }));
   };
 
-  const addAdmin = () => {
-    setAdmins((prev) => [...prev, newAdmin]);
-    setNewAdmin({ name: "", email: "" });
+  const addAcademia = () => {
+    setAcademias((prev) => [
+      ...prev,
+      { ...newAcademia, id: academias.length + 1 },
+    ]);
+    setNewAcademia({ name: "", owner: "", ownerEmail: "" });
     toggleModal();
   };
 
   return (
     <div>
-      <Header title="Lista de" block="Adminstradores" className="" />
+      <Header title="Lista de" block="Academias" className="" />
 
       <div className="mt-8 px-[70]">
         <div className="flex justify-between items-center mb-4">
@@ -38,7 +60,7 @@ export default function AdminScreen() {
             onClick={toggleModal}
             className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
           >
-            Adicionar Administrador
+            Adicionar Academia
           </button>
         </div>
 
@@ -46,10 +68,16 @@ export default function AdminScreen() {
           <thead>
             <tr className="bg-[#00BB83] text-white">
               <th className="border border-gray-300 px-4 py-2 rounded-tl-md text-left animate__animated animate__fadeIn">
-                Nome
+                ID
               </th>
               <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
-                Email
+                Nome Academia
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
+                Dono
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-2s">
+                Email Dono
               </th>
               <th className="border border-gray-300 px-4 py-2 rounded-tr-md text-left animate__animated animate__fadeIn animate__delay-2s">
                 Ações
@@ -57,19 +85,28 @@ export default function AdminScreen() {
             </tr>
           </thead>
           <tbody>
-            {admins.map((admin, index) => (
-              <tr key={index} className="hover:bg-gray-50 animate__animated animate__fadeIn animate__delay-3s">
+            {academias.map((academia, index) => (
+              <tr
+                key={index}
+                className="hover:bg-gray-50 animate__animated animate__fadeIn animate__delay-3s"
+              >
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
-                  {admin.name}
+                  {academia.id}
                 </td>
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
-                  {admin.email}
+                  {academia.name}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2 text-center">
-                  <button className="text-[#00BB83] hover:text-[#00BB83] mx-2">
+                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                  {academia.owner}
+                </td>
+                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                  {academia.ownerEmail}
+                </td>
+                <td className="bg-[#e7e7e7] border border-gray-300 p-2 text-center flex justify-center items-center space-x-2">
+                  <button className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center">
                     <span className="material-icons">edit</span>
                   </button>
-                  <button className="text-red-600 hover:text-red-800">
+                  <button className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center">
                     <span className="material-icons">delete</span>
                   </button>
                 </td>
@@ -82,35 +119,59 @@ export default function AdminScreen() {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
-            <h3 className="text-lg font-bold mb-4">Adicionar Administrador</h3>
+            <h3 className="text-lg font-bold mb-4">Adicionar Academia</h3>
             <form>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="name">
-                  Nome
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="name"
+                >
+                  Nome Academia
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  value={newAdmin.name}
+                  value={newAcademia.name}
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded px-3 py-2"
-                  placeholder="Digite o nome"
+                  placeholder="Digite o nome da academia"
                   required
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="email">
-                  Email
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="owner"
+                >
+                  Dono
+                </label>
+                <input
+                  type="text"
+                  id="owner"
+                  name="owner"
+                  value={newAcademia.owner}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Digite o nome do dono"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="ownerEmail"
+                >
+                  Email Dono
                 </label>
                 <input
                   type="email"
-                  id="email"
-                  name="email"
-                  value={newAdmin.email}
+                  id="ownerEmail"
+                  name="ownerEmail"
+                  value={newAcademia.ownerEmail}
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded px-3 py-2"
-                  placeholder="Digite o email"
+                  placeholder="Digite o email do dono"
                   required
                 />
               </div>
@@ -124,7 +185,7 @@ export default function AdminScreen() {
                 </button>
                 <button
                   type="button"
-                  onClick={addAdmin}
+                  onClick={addAcademia}
                   className="bg-[#00BB83] text-white px-4 py-2 rounded hover:bg-[#009966] transition"
                 >
                   Adicionar
