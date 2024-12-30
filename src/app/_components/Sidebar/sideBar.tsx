@@ -104,7 +104,7 @@ export default function Sidebar() {
             <a
               href="/admins"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
-              aria-label="Perfil"
+              aria-label="Adminstradores"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
@@ -114,7 +114,7 @@ export default function Sidebar() {
               >
                 person
               </span>
-              {!isCollapsed && <span>Perfil</span>}
+              {!isCollapsed && <span>Adminstradores</span>}
             </a>
           </li>
         </ul>

@@ -6,12 +6,12 @@ import Header from "@/app/_components/Header/header";
 export default function AdminScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [admins, setAdmins] = useState([
-    { id: 1, name: "Admin 1", email: "admin1@example.com" },
-    { id: 2, name: "Admin 2", email: "admin2@example.com" },
-    { id: 3, name: "Admin 3", email: "admin3@example.com" },
+    { id: 1, name: "Admin 1", email: "admin1@example.com", subRole: "Gerente" },
+    { id: 2, name: "Admin 2", email: "admin2@example.com", subRole: "Supervisor" },
+    { id: 3, name: "Admin 3", email: "admin3@example.com", subRole: "Assistente" },
   ]);
 
-  const [newAdmin, setNewAdmin] = useState({ id: "", name: "", email: "" });
+  const [newAdmin, setNewAdmin] = useState({ id: "", name: "", email: "", subRole: "" });
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -25,7 +25,7 @@ export default function AdminScreen() {
   const addAdmin = () => {
     const newId = admins.length + 1;
     setAdmins((prev) => [...prev, { ...newAdmin, id: newId }]);
-    setNewAdmin({ id: "", name: "", email: "" });
+    setNewAdmin({ id: "", name: "", email: "", subRole: "" });
     toggleModal();
   };
 
@@ -55,6 +55,9 @@ export default function AdminScreen() {
               <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
                 Email
               </th>
+              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
+                Subcargo
+              </th>
               <th className="border border-gray-300 px-4 py-2 rounded-tr-md text-left animate__animated animate__fadeIn animate__delay-2s">
                 Ações
               </th>
@@ -71,6 +74,9 @@ export default function AdminScreen() {
                 </td>
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
                   {admin.email}
+                </td>
+                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                  {admin.subRole}
                 </td>
                 <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2 text-center flex justify-center items-center space-x-2">
                   <button className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center">
@@ -133,6 +139,21 @@ export default function AdminScreen() {
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   placeholder="Digite o email"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1" htmlFor="subRole">
+                  Subcargo
+                </label>
+                <input
+                  type="text"
+                  id="subRole"
+                  name="subRole"
+                  value={newAdmin.subRole}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="Digite o subcargo"
                   required
                 />
               </div>
