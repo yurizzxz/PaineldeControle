@@ -1,11 +1,17 @@
 'use client';
-
 import { useState, useEffect, ChangeEvent } from "react";
 import bcrypt from "bcryptjs";
 import Header from "@/app/_components/Header/header";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
-
-import { db, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "../firebaseconfig"; 
+import {
+  db,
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  onSnapshot,
+} from "../firebaseconfig";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 interface Admin {
@@ -18,7 +24,14 @@ interface Admin {
 
 export default function AdminScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "", subRole: "", id: "" });
+  const [newAdmin, setNewAdmin] = useState<Admin | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const [newAdminToAdd, setNewAdminToAdd] = useState({
+    name: "",
+    email: "",
+    password: "",
+    subRole: "",
+  });
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
 
@@ -28,52 +41,53 @@ export default function AdminScreen() {
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewAdmin((prev) => ({ ...prev, [name]: value }));
+    setNewAdminToAdd((prev) => ({ ...prev, [name]: value }));
   };
 
   const addAdmin = async () => {
     try {
-      // Hashing the password before storing
       let hashedPassword = "";
-      if (newAdmin.password) {
-        hashedPassword = await bcrypt.hash(newAdmin.password, 10);
+      if (newAdminToAdd.password) {
+        hashedPassword = await bcrypt.hash(newAdminToAdd.password, 10);
       }
 
-      if (newAdmin.id) {
-        // Editando o administrador existente
+      if (newAdmin?.id) {
         const adminRef = doc(db, "admins", newAdmin.id);
         await updateDoc(adminRef, {
-          name: newAdmin.name,
-          email: newAdmin.email,
-          subRole: newAdmin.subRole,
+          name: newAdminToAdd.name,
+          email: newAdminToAdd.email,
+          subRole: newAdminToAdd.subRole,
           password: hashedPassword,
         });
 
         setSuccessMessage("Administrador atualizado com sucesso!");
       } else {
-        // Criando um novo administrador
         const auth = getAuth();
-        const userCredential = await createUserWithEmailAndPassword(auth, newAdmin.email, newAdmin.password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          newAdminToAdd.email,
+          newAdminToAdd.password
+        );
 
         await addDoc(collection(db, "admins"), {
-          name: newAdmin.name,
-          email: newAdmin.email,
-          subRole: newAdmin.subRole,
+          name: newAdminToAdd.name,
+          email: newAdminToAdd.email,
+          subRole: newAdminToAdd.subRole,
           password: hashedPassword,
         });
 
         await addDoc(collection(db, "users"), {
           uid: userCredential.user.uid,
-          name: newAdmin.name,
-          email: newAdmin.email,
+          name: newAdminToAdd.name,
+          email: newAdminToAdd.email,
           role: "admin",
-          subRole: newAdmin.subRole,
+          subRole: newAdminToAdd.subRole,
         });
 
         setSuccessMessage("Administrador adicionado com sucesso!");
       }
 
-      setNewAdmin({ name: "", email: "", password: "", subRole: "", id: "" });
+      setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
       toggleModal();
     } catch (error) {
       console.error("Erro ao adicionar/editar administrador:", error);
@@ -85,22 +99,25 @@ export default function AdminScreen() {
   };
 
   useEffect(() => {
-    // Escutando alterações em tempo real no banco de dados
-    const unsubscribe = onSnapshot(collection(db, "admins"), (querySnapshot) => {
-      const adminsList: Admin[] = [];
-      querySnapshot.forEach((doc) => {
-        const admin = doc.data() as Admin;
-        adminsList.push(Object.assign({ id: doc.id }, admin));
-      });
-      setAdmins(adminsList);
-    });
+    const unsubscribe = onSnapshot(
+      collection(db, "admins"),
+      (querySnapshot) => {
+        const adminsList: Admin[] = [];
+        querySnapshot.forEach((doc) => {
+          const admin = doc.data() as Admin;
+          adminsList.push(Object.assign({ id: doc.id }, admin));
+        });
+        setAdmins(adminsList);
+      }
+    );
 
-    // Cleanup function para parar a escuta quando o componente for desmontado
     return () => unsubscribe();
   }, []);
 
   const deleteAdmin = async (id: string) => {
-    const confirmDelete = window.confirm("Tem certeza que deseja excluir este administrador?");
+    const confirmDelete = window.confirm(
+      "Tem certeza que deseja excluir este administrador?"
+    );
     if (confirmDelete) {
       try {
         const adminRef = doc(db, "admins", id);
@@ -114,18 +131,38 @@ export default function AdminScreen() {
 
   const editAdmin = (admin: Admin) => {
     setNewAdmin(admin);
+    setNewAdminToAdd({
+      name: admin.name,
+      email: admin.email,
+      password: "",
+      subRole: admin.subRole,
+    });
     toggleModal();
   };
 
   return (
     <div>
       <Header title="Lista de" block="Administradores" className="" />
-      {successMessage && <SuccessMessage onClose={closeSuccessMessage} message={successMessage} />}
+      {successMessage && (
+        <SuccessMessage
+          onClose={closeSuccessMessage}
+          message={successMessage}
+        />
+      )}
 
       <div className="mt-8 px-[70]">
         <div className="flex justify-between items-center mb-4">
           <button
-            onClick={toggleModal}
+            onClick={() => {
+              setNewAdminToAdd({
+                name: "",
+                email: "",
+                password: "",
+                subRole: "",
+              });
+              setNewAdmin(null);
+              toggleModal();
+            }}
             className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
           >
             Adicionar Administrador
@@ -194,57 +231,69 @@ export default function AdminScreen() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
             <h3 className="text-lg font-bold mb-4">
-              {newAdmin.id ? "Editar Administrador" : "Adicionar Administrador"}
+              {newAdmin ? "Editar Administrador" : "Adicionar Administrador"}
             </h3>
             <form>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="name">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="name"
+                >
                   Nome
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  value={newAdmin.name}
+                  value={newAdminToAdd.name}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="email">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="email"
+                >
                   Email
                 </label>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  value={newAdmin.email}
+                  value={newAdminToAdd.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="subRole">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="subRole"
+                >
                   Cargo
                 </label>
                 <input
                   type="text"
                   id="subRole"
                   name="subRole"
-                  value={newAdmin.subRole}
+                  value={newAdminToAdd.subRole}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1" htmlFor="password">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="password"
+                >
                   Senha
                 </label>
                 <input
                   type="password"
                   id="password"
                   name="password"
-                  value={newAdmin.password}
+                  value={newAdminToAdd.password}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
@@ -252,7 +301,10 @@ export default function AdminScreen() {
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
-                  onClick={toggleModal}
+                  onClick={() => {
+                    setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
+                    toggleModal();
+                  }}
                   className="bg-gray-300 text-white px-4 py-2 rounded-md"
                 >
                   Cancelar
@@ -262,7 +314,7 @@ export default function AdminScreen() {
                   onClick={addAdmin}
                   className="bg-[#00BB83] text-white px-4 py-2 rounded-md"
                 >
-                  {newAdmin.id ? "Salvar Alterações" : "Adicionar"}
+                  {newAdmin ? "Salvar Alterações" : "Adicionar"}
                 </button>
               </div>
             </form>

@@ -10,7 +10,6 @@ import {
   deleteDoc,
   updateDoc,
   getDocs,
-  DocumentReference,
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
@@ -37,11 +36,11 @@ export default function AcademiaScreen() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const showSuccessMessage = (message: string): void => {
-    setSuccessMessage(message); // Exibe a mensagem de sucesso
+    setSuccessMessage(message);
   };
 
   const closeSuccessMessage = (): void => {
-    setSuccessMessage(null); // Fecha a mensagem
+    setSuccessMessage(null);
   };
 
   useEffect(() => {
@@ -63,6 +62,16 @@ export default function AcademiaScreen() {
   }, []);
 
   const toggleModal = (): void => {
+    if (isModalOpen) {
+      setIsEditing(false);
+      setNewAcademia({
+        id: "",
+        name: "",
+        owner: "",
+        ownerEmail: "",
+        password: "",
+      }); // Limpar os campos
+    }
     setIsModalOpen(!isModalOpen);
   };
 

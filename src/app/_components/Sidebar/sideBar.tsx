@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState<boolean | null>(null);
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUserName = localStorage.getItem("userName");
       const storedUserEmail = localStorage.getItem("userEmail");
+      const storedSidebarState = localStorage.getItem("sidebarState");
 
       if (storedUserName) {
         setUserName(storedUserName);
@@ -18,8 +19,15 @@ export default function Sidebar() {
       if (storedUserEmail) {
         setUserEmail(storedUserEmail);
       }
+      if (storedSidebarState) {
+        setIsCollapsed(storedSidebarState === "true");
+      }
     }
   }, []);
+
+  if (isCollapsed === null) {
+    return null;
+  }
 
   const toggleSidebar = () => {
     const newState = !isCollapsed;
@@ -31,11 +39,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-screen ${
-        isCollapsed ? "w-20" : "w-80"
-      } bg-[#e4e4e4] text-black flex flex-col py-10 transition-all duration-300 ease-in-out transform ${
-        isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
-      } sm:translate-x-0`}
+      className={`h-screen ${isCollapsed ? "w-20" : "w-80"} bg-[#e4e4e4] text-black flex flex-col py-10 transition-all duration-300 ease-in-out transform ${isCollapsed ? "translate-x-[-100%]" : "translate-x-0"} sm:translate-x-0`}
     >
       <header className="flex flex-col pl-5 mb-10">
         <button
@@ -49,12 +53,10 @@ export default function Sidebar() {
 
         <div className="flex items-center mt-[50px]">
           <div
-            className={`h-20 w-20 bg-gray-200 rounded-full flex items-center justify-center mr-4 overflow-hidden transition-all duration-300 ${
-              isCollapsed ? "h-10 w-10" : "h-20 w-20"
-            }`}
+            className={`h-20 w-20 bg-gray-200 rounded-full flex items-center justify-center mr-4 overflow-hidden transition-all duration-300 ${isCollapsed ? "h-9 w-9" : "h-20 w-20"}`}
           >
             <img
-              src="your-image-url.jpg"
+              src="./logo-verde.png"
               alt="Foto do Usuário"
               className="object-cover w-full h-full"
             />
@@ -79,9 +81,7 @@ export default function Sidebar() {
               aria-label="Home"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${
-                  !isCollapsed ? "translate-x-2" : ""
-                }`}
+                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
                 style={{ fontSize: "30px" }}
               >
                 home
@@ -96,9 +96,7 @@ export default function Sidebar() {
               aria-label="Gyms"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${
-                  !isCollapsed ? "translate-x-2" : ""
-                }`}
+                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
                 style={{ fontSize: "30px" }}
               >
                 fitness_center
@@ -114,9 +112,7 @@ export default function Sidebar() {
               aria-label="Adminstradores"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${
-                  !isCollapsed ? "translate-x-2" : ""
-                }`}
+                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
                 style={{ fontSize: "30px" }}
               >
                 person
@@ -129,14 +125,12 @@ export default function Sidebar() {
 
       <footer className="mt-8 w-full px-4">
         <a
-          href="/logout"
+          href="/login"
           className="flex items-center space-x-7 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
           aria-label="Sair"
         >
           <span
-            className={`material-icons transform transition-all duration-300 ${
-              !isCollapsed ? "translate-x-2" : ""
-            }`}
+            className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
             style={{ fontSize: "30px" }}
           >
             logout
