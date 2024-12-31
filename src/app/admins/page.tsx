@@ -11,6 +11,7 @@ import {
   doc,
   updateDoc,
   onSnapshot,
+  setDoc,
 } from "../firebaseconfig";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -46,30 +47,28 @@ export default function AdminScreen() {
   const addAdmin = async () => {
     try {
       const auth = getAuth();
-
-      // Criação do usuário no Firebase Auth
+  
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         newAdminToAdd.email,
         newAdminToAdd.password
       );
-
-      // Adicionando o administrador no Firestore
-      await addDoc(collection(db, "admins"), {
+  
+      const uid = userCredential.user.uid;
+  
+      await setDoc(doc(db, "admins", uid), {
         name: newAdminToAdd.name,
         email: newAdminToAdd.email,
         subRole: newAdminToAdd.subRole,
-        password: await bcrypt.hash(newAdminToAdd.password, 10), // Senha criptografada no Firestore (não recomendável salvar diretamente no Firestore)
+        password: await bcrypt.hash(newAdminToAdd.password, 10),
       });
-
-      // Adicionando o usuário na coleção "users", com apenas nome e email
-      await addDoc(collection(db, "users"), {
-        uid: userCredential.user.uid,
+  
+      await setDoc(doc(db, "users", uid), {
         name: newAdminToAdd.name,
         email: newAdminToAdd.email,
-        role: "admin", // Definindo o role como admin
+        role: "admin",
       });
-
+  
       setSuccessMessage("Administrador adicionado com sucesso!");
       setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
       toggleModal();
@@ -78,6 +77,7 @@ export default function AdminScreen() {
       setSuccessMessage("Erro ao adicionar administrador.");
     }
   };
+  
 
   const closeSuccessMessage = () => {
     setSuccessMessage(null);

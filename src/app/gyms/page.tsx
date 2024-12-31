@@ -74,7 +74,7 @@ export default function AcademiaScreen() {
         owner: "",
         ownerEmail: "",
         password: "",
-      }); // Limpar os campos
+      });
     }
     setIsModalOpen(!isModalOpen);
   };
@@ -89,15 +89,17 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-
+  
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         newAcademia.ownerEmail,
         newAcademia.password
       );
       const user = userCredential.user;
-
+  
       if (user) {
+        const uid = user.uid; 
+  
         if (isEditing) {
           const academiaRef = doc(db, "academias", newAcademia.id);
           await updateDoc(academiaRef, {
@@ -106,8 +108,8 @@ export default function AcademiaScreen() {
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
           });
-
-          const userRef = doc(db, "users", newAcademia.id);
+  
+          const userRef = doc(db, "users", uid);
           await updateDoc(userRef, {
             name: newAcademia.owner,
             email: newAcademia.ownerEmail,
@@ -120,16 +122,16 @@ export default function AcademiaScreen() {
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
           });
-
-          const userRef = doc(db, "users", docRef.id);
+  
+          const userRef = doc(db, "users", uid);
           await setDoc(userRef, {
             name: newAcademia.owner,
             email: newAcademia.ownerEmail,
           });
-
+  
           setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
         }
-
+  
         setNewAcademia({
           id: "",
           name: "",
@@ -148,7 +150,7 @@ export default function AcademiaScreen() {
       console.error("Erro ao salvar academia: ", e);
     }
   };
-
+  
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
       "Tem certeza que deseja excluir esta academia?"
