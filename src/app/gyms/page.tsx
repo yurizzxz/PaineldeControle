@@ -10,6 +10,8 @@ import {
   deleteDoc,
   updateDoc,
   getDocs,
+  getDoc,
+  setDoc
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
@@ -85,7 +87,7 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-
+  
       if (isEditing) {
         const academiaRef = doc(db, "academias", newAcademia.id);
         await updateDoc(academiaRef, {
@@ -94,36 +96,52 @@ export default function AcademiaScreen() {
           ownerEmail: newAcademia.ownerEmail,
           password: hashedPassword,
         });
-
+  
+        // Verifica se o usuário já existe
         const userRef = doc(db, "users", newAcademia.id);
-        await updateDoc(userRef, {
-          name: newAcademia.owner,
-          email: newAcademia.ownerEmail,
-          password: hashedPassword,
-        });
-
+        const userSnapshot = await getDoc(userRef);
+  
+        if (userSnapshot.exists()) {
+          // Atualiza o usuário existente
+          await updateDoc(userRef, {
+            name: newAcademia.owner,
+            email: newAcademia.ownerEmail,
+            password: hashedPassword,
+          });
+        } else {
+          // Cria um novo usuário caso não exista
+          await setDoc(userRef, {
+            name: newAcademia.owner,
+            email: newAcademia.ownerEmail,
+            password: hashedPassword,
+          });
+        }
+  
         setAcademias((prev) =>
           prev.map((academia) =>
             academia.id === newAcademia.id ? { ...newAcademia } : academia
           )
         );
       } else {
+        // Adiciona nova academia
         const docRef = await addDoc(collection(db, "academias"), {
           name: newAcademia.name,
           owner: newAcademia.owner,
           ownerEmail: newAcademia.ownerEmail,
           password: hashedPassword,
         });
-
-        await addDoc(collection(db, "users"), {
+  
+        // Adiciona novo usuário
+        const userRef = doc(db, "users", docRef.id); // Usa o id do documento criado em academias
+        await setDoc(userRef, {
           name: newAcademia.owner,
           email: newAcademia.ownerEmail,
           password: hashedPassword,
         });
-
+  
         setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
       }
-
+  
       setNewAcademia({
         id: "",
         name: "",
@@ -141,6 +159,7 @@ export default function AcademiaScreen() {
       console.error("Erro ao salvar academia: ", e);
     }
   };
+  
 
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
