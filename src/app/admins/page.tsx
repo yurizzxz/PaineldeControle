@@ -25,7 +25,6 @@ interface Admin {
 export default function AdminScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newAdmin, setNewAdmin] = useState<Admin | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const [newAdminToAdd, setNewAdminToAdd] = useState({
     name: "",
     email: "",
@@ -46,51 +45,37 @@ export default function AdminScreen() {
 
   const addAdmin = async () => {
     try {
-      let hashedPassword = "";
-      if (newAdminToAdd.password) {
-        hashedPassword = await bcrypt.hash(newAdminToAdd.password, 10);
-      }
+      const auth = getAuth();
 
-      if (newAdmin?.id) {
-        const adminRef = doc(db, "admins", newAdmin.id);
-        await updateDoc(adminRef, {
-          name: newAdminToAdd.name,
-          email: newAdminToAdd.email,
-          subRole: newAdminToAdd.subRole,
-          password: hashedPassword,
-        });
+      // Criação do usuário no Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        newAdminToAdd.email,
+        newAdminToAdd.password
+      );
 
-        setSuccessMessage("Administrador atualizado com sucesso!");
-      } else {
-        const auth = getAuth();
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          newAdminToAdd.email,
-          newAdminToAdd.password
-        );
+      // Adicionando o administrador no Firestore
+      await addDoc(collection(db, "admins"), {
+        name: newAdminToAdd.name,
+        email: newAdminToAdd.email,
+        subRole: newAdminToAdd.subRole,
+        password: await bcrypt.hash(newAdminToAdd.password, 10), // Senha criptografada no Firestore (não recomendável salvar diretamente no Firestore)
+      });
 
-        await addDoc(collection(db, "admins"), {
-          name: newAdminToAdd.name,
-          email: newAdminToAdd.email,
-          subRole: newAdminToAdd.subRole,
-          password: hashedPassword,
-        });
+      // Adicionando o usuário na coleção "users", com apenas nome e email
+      await addDoc(collection(db, "users"), {
+        uid: userCredential.user.uid,
+        name: newAdminToAdd.name,
+        email: newAdminToAdd.email,
+        role: "admin", // Definindo o role como admin
+      });
 
-        await addDoc(collection(db, "users"), {
-          uid: userCredential.user.uid,
-          name: newAdminToAdd.name,
-          email: newAdminToAdd.email,
-          role: "admin",
-          subRole: newAdminToAdd.subRole,
-        });
-
-        setSuccessMessage("Administrador adicionado com sucesso!");
-      }
-
+      setSuccessMessage("Administrador adicionado com sucesso!");
       setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
       toggleModal();
     } catch (error) {
-      console.error("Erro ao adicionar/editar administrador:", error);
+      console.error("Erro ao adicionar administrador:", error);
+      setSuccessMessage("Erro ao adicionar administrador.");
     }
   };
 

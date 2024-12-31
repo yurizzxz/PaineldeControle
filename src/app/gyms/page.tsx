@@ -14,6 +14,8 @@ import {
   setDoc
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";
+import { createUserWithEmailAndPassword } from "firebase/auth"; 
+import { auth } from "../firebaseconfig"; 
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
 
 interface Academia {
@@ -87,79 +89,65 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-  
-      if (isEditing) {
-        const academiaRef = doc(db, "academias", newAcademia.id);
-        await updateDoc(academiaRef, {
-          name: newAcademia.name,
-          owner: newAcademia.owner,
-          ownerEmail: newAcademia.ownerEmail,
-          password: hashedPassword,
-        });
-  
-        // Verifica se o usuário já existe
-        const userRef = doc(db, "users", newAcademia.id);
-        const userSnapshot = await getDoc(userRef);
-  
-        if (userSnapshot.exists()) {
-          // Atualiza o usuário existente
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        newAcademia.ownerEmail,
+        newAcademia.password
+      );
+      const user = userCredential.user;
+
+      if (user) {
+        if (isEditing) {
+          const academiaRef = doc(db, "academias", newAcademia.id);
+          await updateDoc(academiaRef, {
+            name: newAcademia.name,
+            owner: newAcademia.owner,
+            ownerEmail: newAcademia.ownerEmail,
+            password: hashedPassword,
+          });
+
+          const userRef = doc(db, "users", newAcademia.id);
           await updateDoc(userRef, {
             name: newAcademia.owner,
             email: newAcademia.ownerEmail,
             password: hashedPassword,
           });
         } else {
-          // Cria um novo usuário caso não exista
+          const docRef = await addDoc(collection(db, "academias"), {
+            name: newAcademia.name,
+            owner: newAcademia.owner,
+            ownerEmail: newAcademia.ownerEmail,
+            password: hashedPassword,
+          });
+
+          const userRef = doc(db, "users", docRef.id);
           await setDoc(userRef, {
             name: newAcademia.owner,
             email: newAcademia.ownerEmail,
-            password: hashedPassword,
           });
+
+          setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
         }
-  
-        setAcademias((prev) =>
-          prev.map((academia) =>
-            academia.id === newAcademia.id ? { ...newAcademia } : academia
-          )
+
+        setNewAcademia({
+          id: "",
+          name: "",
+          owner: "",
+          ownerEmail: "",
+          password: "",
+        });
+        toggleModal();
+        setSuccessMessage(
+          isEditing
+            ? "Academia atualizada com sucesso!"
+            : "Academia adicionada com sucesso!"
         );
-      } else {
-        // Adiciona nova academia
-        const docRef = await addDoc(collection(db, "academias"), {
-          name: newAcademia.name,
-          owner: newAcademia.owner,
-          ownerEmail: newAcademia.ownerEmail,
-          password: hashedPassword,
-        });
-  
-        // Adiciona novo usuário
-        const userRef = doc(db, "users", docRef.id); // Usa o id do documento criado em academias
-        await setDoc(userRef, {
-          name: newAcademia.owner,
-          email: newAcademia.ownerEmail,
-          password: hashedPassword,
-        });
-  
-        setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
       }
-  
-      setNewAcademia({
-        id: "",
-        name: "",
-        owner: "",
-        ownerEmail: "",
-        password: "",
-      });
-      toggleModal();
-      setSuccessMessage(
-        isEditing
-          ? "Academia atualizada com sucesso!"
-          : "Academia adicionada com sucesso!"
-      );
     } catch (e) {
       console.error("Erro ao salvar academia: ", e);
     }
   };
-  
 
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
