@@ -4,12 +4,19 @@ import { useState, useEffect } from "react";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedState = localStorage.getItem("sidebarState");
-      if (savedState !== null) {
-        setIsCollapsed(savedState === "true");
+      const storedUserName = localStorage.getItem("userName");
+      const storedUserEmail = localStorage.getItem("userEmail");
+
+      if (storedUserName) {
+        setUserName(storedUserName);
+      }
+      if (storedUserEmail) {
+        setUserEmail(storedUserEmail);
       }
     }
   }, []);
@@ -54,9 +61,9 @@ export default function Sidebar() {
           </div>
           {!isCollapsed && (
             <div className="py-2 flex flex-col gap-1">
-              <h2 className="text-lg font-bold">Academia</h2>
+              <h2 className="text-lg font-bold">{userName || "Usuário"}</h2>
               <p className="text-sm font-semibold text-[#00BB83]">
-                academia@gmail.com
+                {userEmail || "Email não encontrado"}
               </p>
             </div>
           )}

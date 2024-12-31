@@ -19,15 +19,19 @@ export default function Login() {
       const admin = adminsSnapshot.docs.find(
         (doc) => doc.data().email === email
       );
-
+  
       if (!admin) {
         alert("O email fornecido não pertence a um administrador.");
         return;
       }
+  
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userName", admin.data().name);
+  
       setUserName(admin.data().name);
-
+  
       await signInWithEmailAndPassword(auth, email, senha);
-
+  
       setTimeout(() => {
         window.location.href = "/home";
       }, 1500);
@@ -35,6 +39,7 @@ export default function Login() {
       alert("Erro no login: " + error.message);
     }
   };
+  
 
   return (
     <div

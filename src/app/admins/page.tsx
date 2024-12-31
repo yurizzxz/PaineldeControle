@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import Header from "@/app/_components/Header/header";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
 
-import { db, collection, addDoc, deleteDoc, doc, onSnapshot } from "../firebaseconfig"; 
+import { db, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "../firebaseconfig"; 
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 interface Admin {
@@ -18,7 +18,7 @@ interface Admin {
 
 export default function AdminScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "", subRole: "" });
+  const [newAdmin, setNewAdmin] = useState({ name: "", email: "", password: "", subRole: "", id: "" });
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
 
@@ -38,30 +38,45 @@ export default function AdminScreen() {
       if (newAdmin.password) {
         hashedPassword = await bcrypt.hash(newAdmin.password, 10);
       }
-  
-      const auth = getAuth();
-      const userCredential = await createUserWithEmailAndPassword(auth, newAdmin.email, newAdmin.password);
-  
-      await addDoc(collection(db, "admins"), {
-        name: newAdmin.name,
-        email: newAdmin.email,
-        subRole: newAdmin.subRole,
-        password: hashedPassword,
-      });
-  
-      await addDoc(collection(db, "users"), {
-        uid: userCredential.user.uid,
-        name: newAdmin.name,
-        email: newAdmin.email,
-        role: "admin",
-        subRole: newAdmin.subRole,
-      });
-  
-      setSuccessMessage("Administrador adicionado com sucesso!");
-      setNewAdmin({ name: "", email: "", password: "", subRole: "" });
+
+      if (newAdmin.id) {
+        // Editando o administrador existente
+        const adminRef = doc(db, "admins", newAdmin.id);
+        await updateDoc(adminRef, {
+          name: newAdmin.name,
+          email: newAdmin.email,
+          subRole: newAdmin.subRole,
+          password: hashedPassword,
+        });
+
+        setSuccessMessage("Administrador atualizado com sucesso!");
+      } else {
+        // Criando um novo administrador
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(auth, newAdmin.email, newAdmin.password);
+
+        await addDoc(collection(db, "admins"), {
+          name: newAdmin.name,
+          email: newAdmin.email,
+          subRole: newAdmin.subRole,
+          password: hashedPassword,
+        });
+
+        await addDoc(collection(db, "users"), {
+          uid: userCredential.user.uid,
+          name: newAdmin.name,
+          email: newAdmin.email,
+          role: "admin",
+          subRole: newAdmin.subRole,
+        });
+
+        setSuccessMessage("Administrador adicionado com sucesso!");
+      }
+
+      setNewAdmin({ name: "", email: "", password: "", subRole: "", id: "" });
       toggleModal();
     } catch (error) {
-      console.error("Erro ao adicionar administrador:", error);
+      console.error("Erro ao adicionar/editar administrador:", error);
     }
   };
 
