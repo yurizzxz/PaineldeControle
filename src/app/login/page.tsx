@@ -10,7 +10,7 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [userName, setUserName] = useState(""); // Estado para armazenar o nome do usuário
+  const [userName, setUserName] = useState("");
 
   const handleLogin = async () => {
     try {
@@ -47,11 +47,6 @@ export default function Login() {
       style={{ backgroundColor: "#ececec" }}
     >
       <div className="flex flex-col items-center w-full max-w-md px-8 py-10 bg-[#e7e7e7] rounded-lg">
-        <img
-          src="/assets/images/logo-verde.png"
-          alt="Logo"
-          className="w-32 h-auto mb-6"
-        />
         <h1 className="text-2xl font-bold text-black mb-4">
           {userName ? `Bem-vindo, ${userName}!` : "Bem-vindo de volta!"}
         </h1>
