@@ -1,4 +1,7 @@
+"use client"; 
+
 import { Geist, Geist_Mono } from "next/font/google";
+import { usePathname } from "next/navigation";
 import Sidebar from "./_components/Sidebar/sideBar";
 import "./globals.css";
 
@@ -12,16 +15,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  title: "FitFusion - Controle de dados",
-  description: "Controle de dados FitFusion",
-};
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  const hideSidebarRoutes = ["/login", "/cadastro", "/esqueceusenha"];
+  const shouldHideSidebar = hideSidebarRoutes.includes(pathname);
+
   return (
     <html lang="pt-br">
       <head>
@@ -34,7 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="flex flex-row overflow-hidden">
-          <Sidebar />
+          {!shouldHideSidebar && <Sidebar />}
           <div className="flex-1 overflow-hidden">{children}</div>
         </div>
       </body>
