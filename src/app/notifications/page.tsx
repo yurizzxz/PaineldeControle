@@ -175,7 +175,7 @@ export default function Notifications() {
     <div>
       <Header title="Notificações" block="Administrador" className="p-[70px]" />
 
-      <div className="mt-6 pl-[70px] pr-[70px] py-6">
+      <div className="mt-6 py-6">
         <div>
           <button
             onClick={openModal}
@@ -222,9 +222,9 @@ export default function Notifications() {
                   </p>
                   <p className="text-[#00BB83] font-bold flex align-center items-center gap-2 py-2">
                     Usuário:{" "}
-                    <p className="text-white py-2">
+                    <span className="text-white py-2">
                       {notification.userAttribute}
-                    </p>
+                    </span>
                   </p>
                   <p className="text-white">Data: {notification.data}</p>
                 </div>

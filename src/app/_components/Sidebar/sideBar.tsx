@@ -68,7 +68,7 @@ export default function Sidebar() {
     >
       <header className="flex flex-col pl-5 pb-14 mb-10 border-b border-[#101010]">
         <button
-          className="fixed top-5 flex items-center p-2 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-white focus:outline-none"
+          className="fixed top-5 flex items-center p-1.5 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-white focus:outline-none"
           onClick={toggleSidebar}
         >
           <span className="material-icons" style={{ fontSize: "25px" }}>
@@ -97,7 +97,7 @@ export default function Sidebar() {
         </div>
       </header>
 
-      <nav className="flex-1 w-full px-4">
+      <nav className="flex-1 w-full px-3.5">
         <ul className="space-y-7">
           <li>
             <a

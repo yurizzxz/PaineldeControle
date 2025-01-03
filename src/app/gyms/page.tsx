@@ -90,27 +90,27 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-
+  
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         newAcademia.ownerEmail,
         newAcademia.password
       );
       const user = userCredential.user;
-
+  
       if (user) {
         const uid = user.uid;
 
         if (isEditing) {
-          const academiaRef = doc(db, "academias", newAcademia.id);
+          const academiaRef = doc(db, "academias", uid);
           await updateDoc(academiaRef, {
             name: newAcademia.name,
             owner: newAcademia.owner,
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
-            blocked: newAcademia.blocked, // Atualizando o estado de bloqueio
+            blocked: newAcademia.blocked,
           });
-
+  
           const userRef = doc(db, "users", uid);
           await updateDoc(userRef, {
             name: newAcademia.owner,
@@ -118,12 +118,14 @@ export default function AcademiaScreen() {
             password: hashedPassword,
           });
         } else {
-          const docRef = await addDoc(collection(db, "academias"), {
+
+          const academiaRef = doc(db, "academias", uid); 
+          await setDoc(academiaRef, {
             name: newAcademia.name,
             owner: newAcademia.owner,
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
-            blocked: newAcademia.blocked, // Definindo o estado de bloqueio
+            blocked: newAcademia.blocked,
           });
 
           const userRef = doc(db, "users", uid);
@@ -132,17 +134,19 @@ export default function AcademiaScreen() {
             email: newAcademia.ownerEmail,
           });
 
-          setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
+          setAcademias((prev) => [...prev, { ...newAcademia, id: uid }]);
         }
-
+  
+        // Resetando os campos do formulário
         setNewAcademia({
           id: "",
           name: "",
           owner: "",
           ownerEmail: "",
           password: "",
-          blocked: false, // Resetando o estado de bloqueio
+          blocked: false,
         });
+  
         toggleModal();
         setSuccessMessage(
           isEditing
@@ -154,6 +158,7 @@ export default function AcademiaScreen() {
       console.error("Erro ao salvar academia: ", e);
     }
   };
+  
 
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
@@ -194,7 +199,7 @@ export default function AcademiaScreen() {
       try {
         const academiaRef = doc(db, "academias", id);
         await updateDoc(academiaRef, {
-          blocked: !currentStatus, // Alternando o status de bloqueio
+          blocked: !currentStatus, 
         });
 
         setAcademias((prev) =>
@@ -222,7 +227,7 @@ export default function AcademiaScreen() {
         />
       )}
 
-      <div className="mt-14 px-[70]">
+      <div className="mt-14">
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={toggleModal}

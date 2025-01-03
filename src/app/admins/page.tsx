@@ -134,7 +134,7 @@ export default function AdminScreen() {
         />
       )}
 
-      <div className="mt-14 px-[70]">
+      <div className="mt-14">
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => {

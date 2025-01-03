@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import { usePathname } from "next/navigation";
@@ -36,9 +36,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-row overflow-hidden">
-          {!shouldHideSidebar && <Sidebar />}
-          <div className="flex-1 overflow-hidden">{children}</div>
+        <div className="flex flex-row h-screen overflow-auto">
+          {!shouldHideSidebar && (
+            <div className="flex-shrink-0 overflow-y-hidden">
+              <Sidebar />
+            </div>
+          )}
+          <div className="flex-1 p-[70px] overflow-auto">{children}</div>
         </div>
       </body>
     </html>
