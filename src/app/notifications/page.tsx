@@ -202,7 +202,7 @@ export default function Notifications() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEditNotification(notification.id)}
-                        className="bg-[#00BB83] rounded-[60px] text-white pt-1.5 px-2 rounded-md"
+                        className="bg-[#00BB83] rounded-[60px] text-white pt-1.5 px-2"
                       >
                         <span className="material-icons">edit</span>
                       </button>
@@ -210,7 +210,7 @@ export default function Notifications() {
                         onClick={() =>
                           handleDeleteNotification(notification.id)
                         }
-                        className="bg-red-500 rounded-[100px] text-white pt-1.5 px-2 rounded-md"
+                        className="bg-red-500 rounded-[100px] text-white pt-1.5 px-2"
                       >
                         <span className="material-icons">delete</span>
                       </button>

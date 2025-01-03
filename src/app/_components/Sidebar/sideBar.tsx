@@ -66,7 +66,7 @@ export default function Sidebar() {
         isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
       } sm:translate-x-0`}
     >
-      <header className="flex flex-col pl-5 mb-10">
+      <header className="flex flex-col pl-5 pb-14 mb-10 border-b border-[#101010]">
         <button
           className="fixed top-5 flex items-center p-2 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-white focus:outline-none"
           onClick={toggleSidebar}
@@ -97,7 +97,7 @@ export default function Sidebar() {
         </div>
       </header>
 
-      <nav className="flex-1 w-full mt-3 px-4">
+      <nav className="flex-1 w-full px-4">
         <ul className="space-y-7">
           <li>
             <a

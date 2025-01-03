@@ -11,11 +11,11 @@ import {
   updateDoc,
   getDocs,
   getDoc,
-  setDoc
+  setDoc,
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";
-import { createUserWithEmailAndPassword } from "firebase/auth"; 
-import { auth } from "../firebaseconfig"; 
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseconfig";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
 
 interface Academia {
@@ -24,6 +24,7 @@ interface Academia {
   owner: string;
   ownerEmail: string;
   password: string;
+  blocked: boolean; // Novo campo
 }
 
 export default function AcademiaScreen() {
@@ -35,6 +36,7 @@ export default function AcademiaScreen() {
     owner: "",
     ownerEmail: "",
     password: "",
+    blocked: false, // Inicialmente não bloqueado
   });
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -74,14 +76,13 @@ export default function AcademiaScreen() {
         owner: "",
         ownerEmail: "",
         password: "",
+        blocked: false, // Resetando o estado de bloqueio
       });
     }
     setIsModalOpen(!isModalOpen);
   };
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement>
-  ): void => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setNewAcademia((prev) => ({ ...prev, [name]: value }));
   };
@@ -89,17 +90,17 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-  
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         newAcademia.ownerEmail,
         newAcademia.password
       );
       const user = userCredential.user;
-  
+
       if (user) {
-        const uid = user.uid; 
-  
+        const uid = user.uid;
+
         if (isEditing) {
           const academiaRef = doc(db, "academias", newAcademia.id);
           await updateDoc(academiaRef, {
@@ -107,8 +108,9 @@ export default function AcademiaScreen() {
             owner: newAcademia.owner,
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
+            blocked: newAcademia.blocked, // Atualizando o estado de bloqueio
           });
-  
+
           const userRef = doc(db, "users", uid);
           await updateDoc(userRef, {
             name: newAcademia.owner,
@@ -121,23 +123,25 @@ export default function AcademiaScreen() {
             owner: newAcademia.owner,
             ownerEmail: newAcademia.ownerEmail,
             password: hashedPassword,
+            blocked: newAcademia.blocked, // Definindo o estado de bloqueio
           });
-  
+
           const userRef = doc(db, "users", uid);
           await setDoc(userRef, {
             name: newAcademia.owner,
             email: newAcademia.ownerEmail,
           });
-  
+
           setAcademias((prev) => [...prev, { ...newAcademia, id: docRef.id }]);
         }
-  
+
         setNewAcademia({
           id: "",
           name: "",
           owner: "",
           ownerEmail: "",
           password: "",
+          blocked: false, // Resetando o estado de bloqueio
         });
         toggleModal();
         setSuccessMessage(
@@ -150,7 +154,7 @@ export default function AcademiaScreen() {
       console.error("Erro ao salvar academia: ", e);
     }
   };
-  
+
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
       "Tem certeza que deseja excluir esta academia?"
@@ -177,10 +181,46 @@ export default function AcademiaScreen() {
     toggleModal();
   };
 
+  const toggleBlockAcademia = async (
+    id: string,
+    currentStatus: boolean
+  ): Promise<void> => {
+    const action = currentStatus ? "desbloquear" : "bloquear";
+    const confirmAction = window.confirm(
+      `Tem certeza que deseja ${action} esta academia?`
+    );
+
+    if (confirmAction) {
+      try {
+        const academiaRef = doc(db, "academias", id);
+        await updateDoc(academiaRef, {
+          blocked: !currentStatus, // Alternando o status de bloqueio
+        });
+
+        setAcademias((prev) =>
+          prev.map((academia) =>
+            academia.id === id
+              ? { ...academia, blocked: !currentStatus }
+              : academia
+          )
+        );
+
+        setSuccessMessage(`Academia ${action} com sucesso!`);
+      } catch (e) {
+        console.error(`Erro ao ${action} academia: `, e);
+      }
+    }
+  };
+
   return (
     <div>
       <Header title="Lista de" block="Academias" className="" />
-      {successMessage && <SuccessMessage onClose={closeSuccessMessage} message={successMessage} />}
+      {successMessage && (
+        <SuccessMessage
+          onClose={closeSuccessMessage}
+          message={successMessage}
+        />
+      )}
 
       <div className="mt-14 px-[70]">
         <div className="flex justify-between items-center mb-4">
@@ -242,6 +282,19 @@ export default function AcademiaScreen() {
                     className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center"
                   >
                     <span className="material-icons">delete</span>
+                  </button>
+                  <button
+                    onClick={() =>
+                      toggleBlockAcademia(academia.id, academia.blocked)
+                    }
+                    className={`bg-yellow-600 text-white p-3 w-10 h-10 rounded-full hover:bg-yellow-800 flex items-center justify-center ${
+                      academia.blocked ? "bg-gray-600" : ""
+                    }`}
+                    disabled={false}
+                  >
+                    <span className="material-icons">
+                      {academia.blocked ? "lock_open" : "lock"}
+                    </span>
                   </button>
                 </td>
               </tr>
