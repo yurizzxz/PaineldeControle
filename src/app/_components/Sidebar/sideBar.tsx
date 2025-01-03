@@ -62,7 +62,7 @@ export default function Sidebar() {
     <aside
       className={`h-screen ${
         isCollapsed ? "w-20" : "w-96"
-      } bg-[#0a0a0a] text-white flex flex-col py-10 transition-all duration-300 ease-in-out transform ${
+      } bg-[#0a0a0a] text-white flex border-r-2 border-[#252525] flex-col py-10 transition-all duration-300 ease-in-out transform ${
         isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
       } sm:translate-x-0`}
     >
@@ -133,12 +133,11 @@ export default function Sidebar() {
               {!isCollapsed && <span className="text-white">Gyms</span>}
             </a>
           </li>
-
           <li>
             <a
               href="/admins"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
-              aria-label="Adminstradores"
+              aria-label="Gyms"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
@@ -148,7 +147,25 @@ export default function Sidebar() {
               >
                 person
               </span>
-              {!isCollapsed && <span className="text-white">Adminstradores</span>}
+              {!isCollapsed && <span className="text-white">Adminstradoes</span>}
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="/notifications"
+              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              aria-label="Notificações"	
+            >
+              <span
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
+                style={{ fontSize: "30px" }}
+              >
+                notifications
+              </span>
+              {!isCollapsed && <span className="text-white">Notificações</span>}
             </a>
           </li>
         </ul>

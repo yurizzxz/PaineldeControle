@@ -182,7 +182,7 @@ export default function AcademiaScreen() {
       <Header title="Lista de" block="Academias" className="" />
       {successMessage && <SuccessMessage onClose={closeSuccessMessage} message={successMessage} />}
 
-      <div className="mt-8 px-[70]">
+      <div className="mt-14 px-[70]">
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={toggleModal}
@@ -216,21 +216,21 @@ export default function AcademiaScreen() {
             {academias.map((academia, index) => (
               <tr
                 key={index}
-                className="hover:bg-gray-50 animate__animated animate__fadeIn animate__delay-3s"
+                className="bg-[#101010] animate__animated animate__fadeIn animate__delay-3s"
               >
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {academia.id}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {academia.name}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {academia.owner}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {academia.ownerEmail}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 p-2 text-center flex justify-center items-center space-x-2">
+                <td className="border border-[#252525] p-2 text-center flex justify-center items-center space-x-2">
                   <button
                     onClick={() => editAcademia(academia)}
                     className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center"
@@ -252,7 +252,7 @@ export default function AcademiaScreen() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
+          <div className="bg-[#101010] p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
             <h3 className="text-lg font-bold mb-4">
               {isEditing ? "Editar Academia" : "Adicionar Academia"}
             </h3>
@@ -270,7 +270,7 @@ export default function AcademiaScreen() {
                   name="name"
                   value={newAcademia.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -286,7 +286,7 @@ export default function AcademiaScreen() {
                   name="owner"
                   value={newAcademia.owner}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -302,7 +302,7 @@ export default function AcademiaScreen() {
                   name="ownerEmail"
                   value={newAcademia.ownerEmail}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -318,14 +318,14 @@ export default function AcademiaScreen() {
                   name="password"
                   value={newAcademia.password}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={toggleModal}
-                  className="bg-gray-300 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+                  className="bg-[#1a1a1a] border border-[#252525] px-4 py-2 rounded-md"
                 >
                   Cancelar
                 </button>

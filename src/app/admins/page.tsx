@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState, useEffect, ChangeEvent } from "react";
 import bcrypt from "bcryptjs";
 import Header from "@/app/_components/Header/header";
@@ -47,28 +47,28 @@ export default function AdminScreen() {
   const addAdmin = async () => {
     try {
       const auth = getAuth();
-  
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         newAdminToAdd.email,
         newAdminToAdd.password
       );
-  
+
       const uid = userCredential.user.uid;
-  
+
       await setDoc(doc(db, "admins", uid), {
         name: newAdminToAdd.name,
         email: newAdminToAdd.email,
         subRole: newAdminToAdd.subRole,
         password: await bcrypt.hash(newAdminToAdd.password, 10),
       });
-  
+
       await setDoc(doc(db, "users", uid), {
         name: newAdminToAdd.name,
         email: newAdminToAdd.email,
         role: "admin",
       });
-  
+
       setSuccessMessage("Administrador adicionado com sucesso!");
       setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
       toggleModal();
@@ -77,7 +77,6 @@ export default function AdminScreen() {
       setSuccessMessage("Erro ao adicionar administrador.");
     }
   };
-  
 
   const closeSuccessMessage = () => {
     setSuccessMessage(null);
@@ -135,7 +134,7 @@ export default function AdminScreen() {
         />
       )}
 
-      <div className="mt-8 px-[70]">
+      <div className="mt-14 px-[70]">
         <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => {
@@ -178,21 +177,21 @@ export default function AdminScreen() {
             {admins.map((admin, index) => (
               <tr
                 key={index}
-                className="hover:bg-gray-50 animate__animated animate__fadeIn animate__delay-3s"
+                className="bg-[#101010] animate__animated animate__fadeIn animate__delay-3s"
               >
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className=" border border-[#252525] px-4 py-2">
                   {admin.id}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {admin.name}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {admin.email}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 px-4 py-2">
+                <td className="border border-[#252525] px-4 py-2">
                   {admin.subRole}
                 </td>
-                <td className="bg-[#e7e7e7] border border-gray-300 p-2 text-center flex justify-center items-center space-x-2">
+                <td className="border border-[#252525] p-2 text-center flex justify-center items-center space-x-2">
                   <button
                     onClick={() => editAdmin(admin)}
                     className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center"
@@ -214,7 +213,7 @@ export default function AdminScreen() {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
+          <div className="bg-[#101010] p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
             <h3 className="text-lg font-bold mb-4">
               {newAdmin ? "Editar Administrador" : "Adicionar Administrador"}
             </h3>
@@ -232,7 +231,7 @@ export default function AdminScreen() {
                   name="name"
                   value={newAdminToAdd.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -248,7 +247,7 @@ export default function AdminScreen() {
                   name="email"
                   value={newAdminToAdd.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -264,7 +263,7 @@ export default function AdminScreen() {
                   name="subRole"
                   value={newAdminToAdd.subRole}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="mb-4">
@@ -280,17 +279,22 @@ export default function AdminScreen() {
                   name="password"
                   value={newAdminToAdd.password}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={() => {
-                    setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
+                    setNewAdminToAdd({
+                      name: "",
+                      email: "",
+                      password: "",
+                      subRole: "",
+                    });
                     toggleModal();
                   }}
-                  className="bg-gray-300 text-white px-4 py-2 rounded-md"
+                  className="bg-[#1a1a1a] border border-[#252525] px-4 py-2 rounded-md"
                 >
                   Cancelar
                 </button>
