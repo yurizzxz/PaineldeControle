@@ -1,28 +1,51 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db, collection, doc, getDoc, getDocs, onAuthStateChanged, query, where } from "@/app/firebaseconfig";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState<boolean | null>(null);
-  const [userName, setUserName] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [userName, setUserName] = useState<string>("Usuário");
+  const [userEmail, setUserEmail] = useState<string>("Email não encontrado");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserName = localStorage.getItem("userName");
-      const storedUserEmail = localStorage.getItem("userEmail");
-      const storedSidebarState = localStorage.getItem("sidebarState");
+    const fetchUserData = async (user: any) => {
+      try {
+        const userEmail = user.email;
+        setUserEmail(userEmail || "Email não encontrado");
 
-      if (storedUserName) {
-        setUserName(storedUserName);
+        const adminsRef = collection(db, "admins");
+        const adminQuery = query(adminsRef, where("email", "==", userEmail));
+        const adminSnapshot = await getDocs(adminQuery);
+
+        if (!adminSnapshot.empty) {
+          const adminData = adminSnapshot.docs[0].data();
+          setUserName(adminData.name || "Usuário");
+          console.log("Dados do Admin:", adminData);
+        }
+
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          console.log("Dados do Usuário Autenticado:", userDoc.data());
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
       }
-      if (storedUserEmail) {
-        setUserEmail(storedUserEmail);
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUserData(user);
       }
-      if (storedSidebarState) {
-        setIsCollapsed(storedSidebarState === "true");
-      }
+    });
+
+    const storedSidebarState = localStorage.getItem("sidebarState");
+    if (storedSidebarState) {
+      setIsCollapsed(storedSidebarState === "true");
     }
+
+    return () => unsubscribe();
   }, []);
 
   if (isCollapsed === null) {
@@ -32,18 +55,20 @@ export default function Sidebar() {
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("sidebarState", newState.toString());
-    }
+    localStorage.setItem("sidebarState", newState.toString());
   };
 
   return (
     <aside
-      className={`h-screen ${isCollapsed ? "w-20" : "w-80"} bg-[#e4e4e4] text-black flex flex-col py-10 transition-all duration-300 ease-in-out transform ${isCollapsed ? "translate-x-[-100%]" : "translate-x-0"} sm:translate-x-0`}
+      className={`h-screen ${
+        isCollapsed ? "w-20" : "w-96"
+      } bg-[#0a0a0a] text-white flex flex-col py-10 transition-all duration-300 ease-in-out transform ${
+        isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
+      } sm:translate-x-0`}
     >
       <header className="flex flex-col pl-5 mb-10">
         <button
-          className="fixed top-5 flex items-center p-2 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-black focus:outline-none"
+          className="fixed top-5 flex items-center p-2 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-white focus:outline-none"
           onClick={toggleSidebar}
         >
           <span className="material-icons" style={{ fontSize: "25px" }}>
@@ -53,7 +78,9 @@ export default function Sidebar() {
 
         <div className="flex items-center mt-[50px]">
           <div
-            className={`h-20 w-20 bg-gray-200 rounded-full flex items-center justify-center mr-4 overflow-hidden transition-all duration-300 ${isCollapsed ? "h-9 w-9" : "h-20 w-20"}`}
+            className={`h-20 w-20 bg-gray-200 rounded-full flex items-center justify-center mr-4 overflow-hidden transition-all duration-300 ${
+              isCollapsed ? "h-9 w-9" : "h-20 w-20"
+            }`}
           >
             <img
               src="./logo-verde.png"
@@ -63,10 +90,8 @@ export default function Sidebar() {
           </div>
           {!isCollapsed && (
             <div className="py-2 flex flex-col gap-1">
-              <h2 className="text-lg font-bold">{userName || "Usuário"}</h2>
-              <p className="text-sm font-semibold text-[#00BB83]">
-                {userEmail || "Email não encontrado"}
-              </p>
+              <h2 className="text-lg font-bold">{userName}</h2>
+              <p className="text-sm font-semibold text-[#00BB83]">{userEmail}</p>
             </div>
           )}
         </div>
@@ -81,12 +106,14 @@ export default function Sidebar() {
               aria-label="Home"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
                 style={{ fontSize: "30px" }}
               >
                 home
               </span>
-              {!isCollapsed && <span>Home</span>}
+              {!isCollapsed && <span className="text-white">Home</span>}
             </a>
           </li>
           <li>
@@ -96,12 +123,14 @@ export default function Sidebar() {
               aria-label="Gyms"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
                 style={{ fontSize: "30px" }}
               >
                 fitness_center
               </span>
-              {!isCollapsed && <span>Gyms</span>}
+              {!isCollapsed && <span className="text-white">Gyms</span>}
             </a>
           </li>
 
@@ -112,12 +141,14 @@ export default function Sidebar() {
               aria-label="Adminstradores"
             >
               <span
-                className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
                 style={{ fontSize: "30px" }}
               >
                 person
               </span>
-              {!isCollapsed && <span>Adminstradores</span>}
+              {!isCollapsed && <span className="text-white">Adminstradores</span>}
             </a>
           </li>
         </ul>
@@ -130,12 +161,14 @@ export default function Sidebar() {
           aria-label="Sair"
         >
           <span
-            className={`material-icons transform transition-all duration-300 ${!isCollapsed ? "translate-x-2" : ""}`}
+            className={`material-icons transform transition-all duration-300 ${
+              !isCollapsed ? "translate-x-2" : ""
+            }`}
             style={{ fontSize: "30px" }}
           >
             logout
           </span>
-          {!isCollapsed && <span>Sair</span>}
+          {!isCollapsed && <span className="text-white">Sair</span>}
         </a>
       </footer>
     </aside>

@@ -10,9 +10,10 @@ import {
   DocumentReference,
   onSnapshot,
   getDoc,
-  setDoc
+  setDoc,
+  query, where,
 } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -27,4 +28,4 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { auth, db, collection, addDoc, doc, deleteDoc, updateDoc, getDocs, getDoc, setDoc, DocumentReference, onSnapshot };
+export { auth, db, collection, addDoc, doc, deleteDoc, updateDoc, getDocs, getDoc, setDoc, DocumentReference, onSnapshot, query, where, onAuthStateChanged, };
