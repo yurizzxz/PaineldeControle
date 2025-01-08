@@ -173,8 +173,13 @@ export default function Notifications() {
 
   return (
     <div>
-      <Header title="Notificações" block="Administrador" className="p-[70px]" />
-
+      <Header title="Notificações" block="Administrador" className="" />
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          onClose={() => setSuccessMessage(null)}
+        />
+      )}
       <div className="mt-6 py-6">
         <div>
           <button
@@ -293,7 +298,7 @@ export default function Notifications() {
                         description: e.target.value,
                       })
                     }
-                    className="w-full p-2 border rounded-md bg-[#101010] border-[#252525]"
+                    className="w-full p-2 border rounded-md h-60 bg-[#101010] border-[#252525]"
                     required
                   />
                 </div>
@@ -352,12 +357,7 @@ export default function Notifications() {
         )}
       </div>
 
-      {successMessage && (
-        <SuccessMessage
-          message={successMessage}
-          onClose={() => setSuccessMessage(null)}
-        />
-      )}
+     
     </div>
   );
 }

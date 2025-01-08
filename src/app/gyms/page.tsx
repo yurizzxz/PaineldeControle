@@ -24,7 +24,7 @@ interface Academia {
   owner: string;
   ownerEmail: string;
   password: string;
-  blocked: boolean; // Novo campo
+  blocked: boolean;
 }
 
 export default function AcademiaScreen() {
@@ -36,7 +36,7 @@ export default function AcademiaScreen() {
     owner: "",
     ownerEmail: "",
     password: "",
-    blocked: false, // Inicialmente não bloqueado
+    blocked: false,
   });
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export default function AcademiaScreen() {
         owner: "",
         ownerEmail: "",
         password: "",
-        blocked: false, // Resetando o estado de bloqueio
+        blocked: false, 
       });
     }
     setIsModalOpen(!isModalOpen);
@@ -136,8 +136,6 @@ export default function AcademiaScreen() {
 
           setAcademias((prev) => [...prev, { ...newAcademia, id: uid }]);
         }
-  
-        // Resetando os campos do formulário
         setNewAcademia({
           id: "",
           name: "",

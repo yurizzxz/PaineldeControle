@@ -168,6 +168,23 @@ export default function Sidebar() {
               {!isCollapsed && <span className="text-white">Notificações</span>}
             </a>
           </li>
+          <li>
+            <a
+              href="/articles"
+              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              aria-label="Notificações"	
+            >
+              <span
+                className={`material-icons transform transition-all duration-300 ${
+                  !isCollapsed ? "translate-x-2" : ""
+                }`}
+                style={{ fontSize: "30px" }}
+              >
+                article
+              </span>
+              {!isCollapsed && <span className="text-white">Artigos</span>}
+            </a>
+          </li>
         </ul>
       </nav>
 

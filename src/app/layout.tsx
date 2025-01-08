@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export default function RootLayout({
   children,
 }: {
@@ -22,8 +23,11 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
 
-  const hideSidebarRoutes = ["/login", "/cadastro", "/esqueceusenha"];
+  const hideSidebarRoutes = ["/login"];
   const shouldHideSidebar = hideSidebarRoutes.includes(pathname);
+
+  const noPaddingRoutes = ["/login"];
+  const hasPadding = !noPaddingRoutes.includes(pathname);
 
   return (
     <html lang="pt-br">
@@ -42,7 +46,11 @@ export default function RootLayout({
               <Sidebar />
             </div>
           )}
-          <div className="flex-1 p-[70px] overflow-auto">{children}</div>
+          <div
+            className={`flex-1 ${hasPadding ? "p-[70px]" : ""} overflow-auto`}
+          >
+            {children}
+          </div>
         </div>
       </body>
     </html>
