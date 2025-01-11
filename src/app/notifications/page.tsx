@@ -14,7 +14,7 @@ import Header from "@/app/_components/Header/header";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
 
 interface Notification {
-  id?: string; 
+  id?: string;
   description: string;
   subtitle: string;
   title: string;
@@ -23,7 +23,6 @@ interface Notification {
   createdAt?: string;
   updatedAt?: string;
 }
-
 
 interface Academy {
   id: string;
@@ -34,13 +33,13 @@ interface Academy {
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [newNotification, setNewNotification] = useState<Notification>({
-      description: "",
-      subtitle: "",
-      title: "",
-      userAttribute: "",
-      data: new Date().toISOString().split("T")[0],
-    });
+  const [newNotification, setNewNotification] = useState<Notification>({
+    description: "",
+    subtitle: "",
+    title: "",
+    userAttribute: "",
+    data: new Date().toISOString().split("T")[0],
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [academies, setAcademies] = useState<Academy[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -64,13 +63,15 @@ export default function Notifications() {
       const notificationsRef = collection(db, "notifications");
       const snapshot = await getDocs(notificationsRef);
       const notificationsList = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() } as Notification))
+        .map((doc) => {
+          const data = doc.data() as Notification;
+          return { id: doc.id, ...data };
+        })
         .filter((notification) =>
           academies.some(
             (academy) => academy.ownerEmail === notification.userAttribute
           )
-        );
-  
+        ) as Notification[];
       setNotifications(notificationsList);
       setIsLoading(false);
     } catch (error) {
@@ -88,7 +89,7 @@ export default function Notifications() {
       fetchNotifications();
     }
   }, [academies, fetchNotifications]);
-  
+
   const openModal = () => {
     setNewNotification({
       description: "",
@@ -118,7 +119,8 @@ export default function Notifications() {
         subtitle: "",
         title: "",
         userAttribute: "",
-        data: new Date().toLocaleDateString("pt-BR"),      });
+        data: new Date().toLocaleDateString("pt-BR"),
+      });
       closeModal();
       fetchNotifications();
       setSuccessMessage("Notificação criada com sucesso!");
@@ -127,7 +129,7 @@ export default function Notifications() {
     }
   };
 
-  const handleDeleteNotification = async (id: string) => {
+  const handleDeleteNotification = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, "notifications", id));
       fetchNotifications();
@@ -137,7 +139,7 @@ export default function Notifications() {
     }
   };
 
-  const handleEditNotification = async (id: string) => {
+  const handleEditNotification = async (id: string): Promise<void> => {
     const notificationToEdit = notifications.find(
       (notification) => notification.id === id
     );
@@ -195,7 +197,7 @@ export default function Notifications() {
             <p className="text-white">Carregando notificações...</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {notifications.map((notification: any) => (
+              {notifications.map((notification) => (
                 <div
                   key={notification.id}
                   className="bg-[#101010] border border-[#252525] p-6 rounded-md transition duration-300"
@@ -356,8 +358,6 @@ export default function Notifications() {
           </div>
         )}
       </div>
-
-     
     </div>
   );
 }

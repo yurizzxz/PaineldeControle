@@ -11,7 +11,8 @@ import {
   doc,
   deleteDoc,
   onSnapshot,
-  DocumentData, QuerySnapshot
+  DocumentData, 
+  QuerySnapshot
 } from "firebase/firestore";
 import { db } from "../firebaseconfig";
 import SuccessMessage from "../_components/SucessMessage/sucessMessage";
@@ -33,7 +34,6 @@ export default function Artigos() {
     categoria: "",
   });
   const [artigos, setArtigos] = useState<Artigo[]>([]);
-  const [loading, setLoading] = useState<boolean>(false); // Controle de carregamento único
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [articleBeingEdited, setArticleBeingEdited] = useState<Artigo | null>(null);
@@ -50,7 +50,6 @@ export default function Artigos() {
 
   const fetchArtigos = useCallback(async () => {
     try {
-      setLoading(true);
       const artigosQuery = query(collection(db, "artigos"), limit(ITEMS_PER_PAGE));
       const querySnapshot = await getDocs(artigosQuery);
       const artigosData: Artigo[] = querySnapshot.docs.map((doc) => ({
@@ -59,11 +58,9 @@ export default function Artigos() {
         desc: doc.data().desc,
         categoria: doc.data().categoria,
       }));
-      setArtigos(artigosData); 
+      setArtigos(artigosData);
     } catch (error) {
       console.error("Erro ao buscar artigos", error);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -262,7 +259,7 @@ export default function Artigos() {
                   <select
                     name="categoria"
                     value={newArticle.categoria}
-                    onChange={handleInputChange as any}
+                    onChange={handleInputChange}
                     className="w-full p-2 border rounded-md bg-[#101010] border-[#252525]"
                   >
                     <option value="treino">Treino</option>
