@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   collection,
   getDocs,
@@ -35,14 +35,12 @@ export default function Artigos() {
     categoria: "",
   });
   const [artigos, setArtigos] = useState<Artigo[]>([]);
-  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
-  const [loadingMore, setLoadingMore] = useState<boolean>(false);
-  const ITEMS_PER_PAGE = 6;
+  const [loading, setLoading] = useState<boolean>(false); // Controle de carregamento único
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [articleBeingEdited, setArticleBeingEdited] = useState<Artigo | null>(
-    null
-  );
+  const [articleBeingEdited, setArticleBeingEdited] = useState<Artigo | null>(null);
+
+  const ITEMS_PER_PAGE = 6;
 
   const showSuccessMessage = (message: string): void => {
     setSuccessMessage(message);
@@ -52,14 +50,10 @@ export default function Artigos() {
     setSuccessMessage(null);
   };
 
-  const fetchArtigos = async (isInitialLoad = false) => {
+  const fetchArtigos = useCallback(async () => {
     try {
-      setLoadingMore(true);
-      const artigosQuery = query(
-        collection(db, "artigos"),
-        limit(ITEMS_PER_PAGE),
-        ...(lastVisible ? [startAfter(lastVisible)] : [])
-      );
+      setLoading(true);
+      const artigosQuery = query(collection(db, "artigos"), limit(ITEMS_PER_PAGE));
       const querySnapshot = await getDocs(artigosQuery);
       const artigosData: Artigo[] = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -67,16 +61,13 @@ export default function Artigos() {
         desc: doc.data().desc,
         categoria: doc.data().categoria,
       }));
-      setArtigos((prev) =>
-        isInitialLoad ? artigosData : [...prev, ...artigosData]
-      );
-      setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
+      setArtigos(artigosData);  // Exibe todos de uma vez
     } catch (error) {
-      console.error("Erro ao buscar artigos");
+      console.error("Erro ao buscar artigos", error);
     } finally {
-      setLoadingMore(false);
+      setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -91,12 +82,11 @@ export default function Artigos() {
         setArtigos(artigosData);
       }
     );
-  
-    fetchArtigos(true);  // Carregamento inicial
-  
+
+    fetchArtigos();  // Carregamento inicial
+
     return () => unsubscribe();
   }, [fetchArtigos]);
-  
 
   const truncateText = (text: string, limit: number): string => {
     return text.length > limit ? `${text.substring(0, limit)}...` : text;
@@ -182,10 +172,8 @@ export default function Artigos() {
     }
   };
 
- 
-
   return (
-    <main className="min-h-screen ">
+    <main className="min-h-screen">
       <Header title="Lista de" block="Artigos" className="" />
       {successMessage && (
         <SuccessMessage
@@ -198,10 +186,9 @@ export default function Artigos() {
         <button
           onClick={() => openModal()}
           className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
-          >
+        >
           Adicionar Artigo
         </button>
-
 
         <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {artigos.map((artigo) => (
@@ -250,9 +237,7 @@ export default function Artigos() {
 
               <form>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-3">
-                    Título
-                  </label>
+                  <label className="block text-sm font-medium mb-3">Título</label>
                   <input
                     type="text"
                     name="title"
@@ -264,9 +249,7 @@ export default function Artigos() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-3">
-                    Descrição
-                  </label>
+                  <label className="block text-sm font-medium mb-3">Descrição</label>
                   <textarea
                     name="desc"
                     value={newArticle.desc}
@@ -277,9 +260,7 @@ export default function Artigos() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-3">
-                    Selecione a categoria
-                  </label>
+                  <label className="block text-sm font-medium mb-3">Selecione a categoria</label>
                   <select
                     name="categoria"
                     value={newArticle.categoria}
@@ -313,18 +294,6 @@ export default function Artigos() {
                 </div>
               </form>
             </div>
-          </div>
-        )}
-
-        {lastVisible && (
-          <div className="text-center mt-6">
-            <button
-              onClick={() => fetchArtigos(false)}
-              disabled={loadingMore}
-              className="bg-[#00BB83] text-white py-3 px-6 rounded-md hover:bg-[#008f6a] transition duration-300"
-              >
-              {loadingMore ? "Carregando..." : "Ver mais artigos"}
-            </button>
           </div>
         )}
       </div>
