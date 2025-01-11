@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   db,
   collection,
@@ -59,7 +59,7 @@ export default function Notifications() {
     }
   };
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const notificationsRef = collection(db, "notifications");
       const snapshot = await getDocs(notificationsRef);
@@ -70,14 +70,14 @@ export default function Notifications() {
             (academy) => academy.ownerEmail === notification.userAttribute
           )
         );
-
+  
       setNotifications(notificationsList);
       setIsLoading(false);
     } catch (error) {
       console.error("Erro ao buscar notificações:", error);
       setIsLoading(false);
     }
-  };
+  }, [academies]);
 
   useEffect(() => {
     fetchAcademies();

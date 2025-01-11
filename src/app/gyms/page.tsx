@@ -5,12 +5,10 @@ import Header from "@/app/_components/Header/header";
 import {
   db,
   collection,
-  addDoc,
   doc,
   deleteDoc,
   updateDoc,
   getDocs,
-  getDoc,
   setDoc,
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";

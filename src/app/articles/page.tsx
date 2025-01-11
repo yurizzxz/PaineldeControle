@@ -6,13 +6,11 @@ import {
   getDocs,
   query,
   limit,
-  startAfter,
   addDoc,
   updateDoc,
   doc,
   deleteDoc,
   onSnapshot,
-  DocumentSnapshot,
   DocumentData, QuerySnapshot
 } from "firebase/firestore";
 import { db } from "../firebaseconfig";
@@ -61,7 +59,7 @@ export default function Artigos() {
         desc: doc.data().desc,
         categoria: doc.data().categoria,
       }));
-      setArtigos(artigosData);  // Exibe todos de uma vez
+      setArtigos(artigosData); 
     } catch (error) {
       console.error("Erro ao buscar artigos", error);
     } finally {
@@ -83,7 +81,7 @@ export default function Artigos() {
       }
     );
 
-    fetchArtigos();  // Carregamento inicial
+    fetchArtigos(); 
 
     return () => unsubscribe();
   }, [fetchArtigos]);

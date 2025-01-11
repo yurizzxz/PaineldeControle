@@ -5,10 +5,21 @@ import Header from "@/app/_components/Header/header";
 import { auth, db, doc, getDoc, onAuthStateChanged, collection, query, where, getDocs } from "@/app/firebaseconfig";
 import Link from "next/link";
 
+interface User {
+  uid: string;
+  email: string;
+}
+
+interface ReportError {
+  name: string;
+  description: string;
+  email: string;
+}
+
 export default function HomeScreen() {
   const [userName, setUserName] = useState("Usuário");
   const [userEmail, setUserEmail] = useState("Email não encontrado");
-  const [reportErrors, setReportErrors] = useState<Record<string, any>[]>([]);
+  const [reportErrors, setReportErrors] = useState<ReportError[]>([]);
 
   const quickLinks = [
     {
@@ -29,29 +40,31 @@ export default function HomeScreen() {
   ];
 
   useEffect(() => {
-    const fetchUserData = async (user: any) => {
+    const fetchUserData = async (user: User | null) => {
       try {
-        setUserEmail(user.email || "Email não encontrado");
+        if (user) {
+          setUserEmail(user.email || "Email não encontrado");
 
-        const adminsRef = collection(db, "admins");
-        const adminQuery = query(adminsRef, where("email", "==", user.email));
-        const adminSnapshot = await getDocs(adminQuery);
+          const adminsRef = collection(db, "admins");
+          const adminQuery = query(adminsRef, where("email", "==", user.email));
+          const adminSnapshot = await getDocs(adminQuery);
 
-        if (!adminSnapshot.empty) {
-          const adminData = adminSnapshot.docs[0].data();
-          setUserName(adminData.name || "Usuário");
+          if (!adminSnapshot.empty) {
+            const adminData = adminSnapshot.docs[0].data();
+            setUserName(adminData.name || "Usuário");
+          }
+
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            console.log("Dados do Usuário Autenticado:", userDoc.data());
+          }
+
+          const reportErrorRef = collection(db, "reportError");
+          const reportErrorSnapshot = await getDocs(reportErrorRef);
+          const reportErrorData = reportErrorSnapshot.docs.map((doc) => doc.data()) as ReportError[];
+          setReportErrors(reportErrorData);
         }
-
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          console.log("Dados do Usuário Autenticado:", userDoc.data());
-        }
-
-        const reportErrorRef = collection(db, "reportError");
-        const reportErrorSnapshot = await getDocs(reportErrorRef);
-        const reportErrorData = reportErrorSnapshot.docs.map((doc) => doc.data());
-        setReportErrors(reportErrorData); 
       } catch (error) {
         console.error("Erro ao buscar dados do usuário:", error);
       }
@@ -59,7 +72,7 @@ export default function HomeScreen() {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        fetchUserData(user);
+        fetchUserData(user as User);
       }
     });
 
