@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import { auth, db, collection, doc, getDoc, getDocs, onAuthStateChanged, query, where } from "@/app/firebaseconfig";
@@ -11,7 +11,7 @@ export default function Sidebar() {
   const [userEmail, setUserEmail] = useState<string>("Email não encontrado");
 
   useEffect(() => {
-    const fetchUserData = async (user: any) => {
+    const fetchUserData = async (user: { email: string; uid: string }) => {
       try {
         const userEmail = user.email;
         setUserEmail(userEmail || "Email não encontrado");
@@ -38,7 +38,7 @@ export default function Sidebar() {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        fetchUserData(user);
+        fetchUserData(user as { email: string; uid: string });
       }
     });
 
