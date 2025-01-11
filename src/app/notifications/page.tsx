@@ -152,7 +152,7 @@ export default function Notifications() {
   const handleUpdateNotification = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const notificationRef = doc(db, "notifications", newNotification.id);
+      const notificationRef = doc(db, "notifications", newNotification.id!);
       await updateDoc(notificationRef, {
         ...newNotification,
         updatedAt: new Date(),
