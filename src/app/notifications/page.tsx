@@ -146,8 +146,10 @@ export default function Notifications() {
     if (notificationToEdit) {
       setNewNotification(notificationToEdit);
       setIsModalOpen(true);
+    } else {
+      console.error("No notification found with id:", id);
     }
-  };
+};
 
   const handleUpdateNotification = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -208,14 +210,14 @@ export default function Notifications() {
                     </h3>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleEditNotification(notification.id)}
+                        onClick={() => handleEditNotification(notification.id!)}
                         className="bg-[#00BB83] rounded-[60px] text-white pt-1.5 px-2"
                       >
                         <span className="material-icons">edit</span>
                       </button>
                       <button
                         onClick={() =>
-                          handleDeleteNotification(notification.id)
+                          handleDeleteNotification(notification.id!)
                         }
                         className="bg-red-500 rounded-[100px] text-white pt-1.5 px-2"
                       >
