@@ -1,6 +1,12 @@
 'use client';
 
-export default function Header({ title, block, className }: any) {
+interface HeaderProps {
+  title: string;
+  block: string;
+  className?: string;
+}
+
+export default function Header({ title, block, className }: HeaderProps) {
   return (
     <div className={` ${className} pb-12 border-b-2 border-[#101010]`}>
       <div className="flex h-full items-center">

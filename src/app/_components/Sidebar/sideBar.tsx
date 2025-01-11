@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Inicializa como aberto
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("Usuário");
   const [userEmail, setUserEmail] = useState<string>("Email não encontrado");
 
