@@ -12,7 +12,8 @@ import {
   doc,
   deleteDoc,
   onSnapshot,
-  DocumentSnapshot
+  DocumentSnapshot,
+  DocumentData, QuerySnapshot
 } from "firebase/firestore";
 import { db } from "../firebaseconfig";
 import SuccessMessage from "../_components/SucessMessage/sucessMessage";
@@ -80,8 +81,8 @@ export default function Artigos() {
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "artigos"),
-      (querySnapshot) => {
-        const artigosData: Artigo[] = querySnapshot.docs.map((doc) => ({
+      (snapshot: QuerySnapshot<DocumentData>) => {
+        const artigosData: Artigo[] = snapshot.docs.map((doc) => ({
           id: doc.id,
           title: doc.data().title,
           desc: doc.data().desc,
@@ -90,11 +91,12 @@ export default function Artigos() {
         setArtigos(artigosData);
       }
     );
-
-    fetchArtigos(true);
-
+  
+    fetchArtigos(true);  // Carregamento inicial
+  
     return () => unsubscribe();
-  }, []);
+  }, [fetchArtigos]);
+  
 
   const truncateText = (text: string, limit: number): string => {
     return text.length > limit ? `${text.substring(0, limit)}...` : text;
