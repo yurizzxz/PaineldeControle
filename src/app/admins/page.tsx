@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useState, useEffect, ChangeEvent } from "react";
 import bcrypt from "bcryptjs";
 import Header from "@/app/_components/Header/header";
@@ -13,7 +13,7 @@ import {
   onSnapshot,
   setDoc,
 } from "../firebaseconfig";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updatePassword } from "firebase/auth";
 
 interface Admin {
   id: string;
@@ -122,6 +122,36 @@ export default function AdminScreen() {
       subRole: admin.subRole,
     });
     toggleModal();
+  };
+
+  const updateAdmin = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      setSuccessMessage("Usuário não encontrado.");
+      return;
+    }
+
+    try {
+      if (newAdminToAdd.password) {
+        await updatePassword(user, newAdminToAdd.password);
+      }
+
+      await updateDoc(doc(db, "admins", newAdmin!.id), {
+        name: newAdminToAdd.name,
+        email: newAdminToAdd.email,
+        subRole: newAdminToAdd.subRole,
+        password: await bcrypt.hash(newAdminToAdd.password, 10), 
+      });
+
+      setSuccessMessage("Administrador atualizado com sucesso!");
+      toggleModal();
+      setNewAdminToAdd({ name: "", email: "", password: "", subRole: "" });
+    } catch (error) {
+      console.error("Erro ao atualizar administrador:", error);
+      setSuccessMessage("Erro ao atualizar administrador.");
+    }
   };
 
   return (
@@ -300,7 +330,7 @@ export default function AdminScreen() {
                 </button>
                 <button
                   type="button"
-                  onClick={addAdmin}
+                  onClick={newAdmin ? updateAdmin : addAdmin}
                   className="bg-[#00BB83] text-white px-4 py-2 rounded-md"
                 >
                   {newAdmin ? "Salvar Alterações" : "Adicionar"}

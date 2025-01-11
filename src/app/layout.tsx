@@ -15,7 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export default function RootLayout({
   children,
 }: {
@@ -36,6 +35,18 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
         />
+        <title>
+          FitFusion - Painel de Controle
+        </title>
+        <meta
+          name="description"
+          content={
+            pathname === "/login"
+              ? "Faça login para acessar sua conta."
+              : "Bem-vindo ao painel da sua aplicação."
+          }
+        />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -47,7 +58,7 @@ export default function RootLayout({
             </div>
           )}
           <div
-            className={`flex-1 ${hasPadding ? "p-[70px]" : ""} overflow-auto`}
+            className={`flex-1 ${hasPadding ? "p-[60px]" : ""} overflow-auto`}
           >
             {children}
           </div>

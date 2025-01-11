@@ -61,7 +61,7 @@ export default function Sidebar() {
   return (
     <aside
       className={`h-screen ${
-        isCollapsed ? "w-20" : "w-96"
+        isCollapsed ? "w-20" : "w-80"
       } bg-[#0a0a0a] text-white flex border-r-2 border-[#252525] flex-col py-10 transition-all duration-300 ease-in-out transform ${
         isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
       } sm:translate-x-0`}
@@ -91,7 +91,7 @@ export default function Sidebar() {
           {!isCollapsed && (
             <div className="py-2 flex flex-col gap-1">
               <h2 className="text-lg font-bold">{userName}</h2>
-              <p className="text-sm font-semibold text-[#00BB83]">{userEmail}</p>
+              <p className="text-xs font-semibold text-[#00BB83]">{userEmail}</p>
             </div>
           )}
         </div>
@@ -109,28 +109,28 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "30px" }}
+                style={{ fontSize: "1.5rem"  }}
               >
                 home
               </span>
-              {!isCollapsed && <span className="text-white">Home</span>}
+              {!isCollapsed && <span className="text-white text-[.95rem]">Home</span>}
             </a>
           </li>
           <li>
             <a
               href="/gyms"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-7  space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Gyms"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "30px" }}
+                style={{ fontSize: "1.5rem" }}
               >
                 fitness_center
               </span>
-              {!isCollapsed && <span className="text-white">Gyms</span>}
+              {!isCollapsed && <span className="text-white text-[.95rem]">Gyms</span>}
             </a>
           </li>
           <li>
@@ -143,11 +143,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "30px" }}
+                style={{ fontSize: "1.5rem" }}
               >
                 person
               </span>
-              {!isCollapsed && <span className="text-white">Adminstradoes</span>}
+              {!isCollapsed && <span className="text-white text-[.95rem]">Adminstradoes</span>}
             </a>
           </li>
 
@@ -161,11 +161,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "30px" }}
+                style={{ fontSize: "1.5rem" }}
               >
                 notifications
               </span>
-              {!isCollapsed && <span className="text-white">Notificações</span>}
+              {!isCollapsed && <span className="text-white text-[.95rem]">Notificações</span>}
             </a>
           </li>
           <li>
@@ -178,11 +178,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "30px" }}
+                style={{ fontSize: "1.5rem" }}
               >
                 article
               </span>
-              {!isCollapsed && <span className="text-white">Artigos</span>}
+              {!isCollapsed && <span className="text-white text-[.95rem]">Artigos</span>}
             </a>
           </li>
         </ul>
@@ -198,11 +198,11 @@ export default function Sidebar() {
             className={`material-icons transform transition-all duration-300 ${
               !isCollapsed ? "translate-x-2" : ""
             }`}
-            style={{ fontSize: "30px" }}
+            style={{ fontSize: "1.5rem" }}
           >
             logout
           </span>
-          {!isCollapsed && <span className="text-white">Sair</span>}
+          {!isCollapsed && <span className="text-white text-[.95rem]">Sair</span>}
         </a>
       </footer>
     </aside>

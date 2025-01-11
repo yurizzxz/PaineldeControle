@@ -184,7 +184,7 @@ export default function Artigos() {
  
 
   return (
-    <div className="min-h-screen ">
+    <main className="min-h-screen ">
       <Header title="Lista de" block="Artigos" className="" />
       {successMessage && (
         <SuccessMessage
@@ -196,8 +196,8 @@ export default function Artigos() {
       <div className="container mt-6 py-6">
         <button
           onClick={() => openModal()}
-          className="bg-[#00BB83] text-white py-3 px-6 rounded-md hover:bg-[#008f6a] transition duration-300"
-        >
+          className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
+          >
           Adicionar Artigo
         </button>
 
@@ -282,7 +282,7 @@ export default function Artigos() {
                   <select
                     name="categoria"
                     value={newArticle.categoria}
-                    onChange={handleInputChange}
+                    onChange={handleInputChange as any}
                     className="w-full p-2 border rounded-md bg-[#101010] border-[#252525]"
                   >
                     <option value="treino">Treino</option>
@@ -320,13 +320,13 @@ export default function Artigos() {
             <button
               onClick={() => fetchArtigos(false)}
               disabled={loadingMore}
-              className="px-4 py-2 bg-[#00BB83] text-white rounded-md hover:bg-[#008c63] transition"
-            >
+              className="bg-[#00BB83] text-white py-3 px-6 rounded-md hover:bg-[#008f6a] transition duration-300"
+              >
               {loadingMore ? "Carregando..." : "Ver mais artigos"}
             </button>
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

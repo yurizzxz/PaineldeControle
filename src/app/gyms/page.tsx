@@ -76,7 +76,7 @@ export default function AcademiaScreen() {
         owner: "",
         ownerEmail: "",
         password: "",
-        blocked: false, 
+        blocked: false,
       });
     }
     setIsModalOpen(!isModalOpen);
@@ -90,36 +90,35 @@ export default function AcademiaScreen() {
   const saveAcademia = async (): Promise<void> => {
     try {
       const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-  
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        newAcademia.ownerEmail,
-        newAcademia.password
-      );
-      const user = userCredential.user;
-  
-      if (user) {
-        const uid = user.uid;
 
-        if (isEditing) {
+      if (isEditing) {
+        const academiaRef = doc(db, "academias", newAcademia.id);
+        await updateDoc(academiaRef, {
+          name: newAcademia.name,
+          owner: newAcademia.owner,
+          ownerEmail: newAcademia.ownerEmail,
+          password: hashedPassword,
+          blocked: newAcademia.blocked,
+        });
+
+        const userRef = doc(db, "users", newAcademia.id);
+        await updateDoc(userRef, {
+          name: newAcademia.owner,
+          email: newAcademia.ownerEmail,
+          password: hashedPassword,
+        });
+      } else {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          newAcademia.ownerEmail,
+          newAcademia.password
+        );
+        const user = userCredential.user;
+
+        if (user) {
+          const uid = user.uid;
+
           const academiaRef = doc(db, "academias", uid);
-          await updateDoc(academiaRef, {
-            name: newAcademia.name,
-            owner: newAcademia.owner,
-            ownerEmail: newAcademia.ownerEmail,
-            password: hashedPassword,
-            blocked: newAcademia.blocked,
-          });
-  
-          const userRef = doc(db, "users", uid);
-          await updateDoc(userRef, {
-            name: newAcademia.owner,
-            email: newAcademia.ownerEmail,
-            password: hashedPassword,
-          });
-        } else {
-
-          const academiaRef = doc(db, "academias", uid); 
           await setDoc(academiaRef, {
             name: newAcademia.name,
             owner: newAcademia.owner,
@@ -136,27 +135,26 @@ export default function AcademiaScreen() {
 
           setAcademias((prev) => [...prev, { ...newAcademia, id: uid }]);
         }
-        setNewAcademia({
-          id: "",
-          name: "",
-          owner: "",
-          ownerEmail: "",
-          password: "",
-          blocked: false,
-        });
-  
-        toggleModal();
-        setSuccessMessage(
-          isEditing
-            ? "Academia atualizada com sucesso!"
-            : "Academia adicionada com sucesso!"
-        );
       }
+
+      setNewAcademia({
+        id: "",
+        name: "",
+        owner: "",
+        ownerEmail: "",
+        password: "",
+        blocked: false,
+      });
+      toggleModal();
+      setSuccessMessage(
+        isEditing
+          ? "Academia atualizada com sucesso!"
+          : "Academia adicionada com sucesso!"
+      );
     } catch (e) {
       console.error("Erro ao salvar academia: ", e);
     }
   };
-  
 
   const deleteAcademia = async (id: string): Promise<void> => {
     const confirmDelete = window.confirm(
@@ -197,7 +195,7 @@ export default function AcademiaScreen() {
       try {
         const academiaRef = doc(db, "academias", id);
         await updateDoc(academiaRef, {
-          blocked: !currentStatus, 
+          blocked: !currentStatus,
         });
 
         setAcademias((prev) =>
@@ -216,7 +214,7 @@ export default function AcademiaScreen() {
   };
 
   return (
-    <div>
+    <main>
       <Header title="Lista de" block="Academias" className="" />
       {successMessage && (
         <SuccessMessage
@@ -225,93 +223,97 @@ export default function AcademiaScreen() {
         />
       )}
 
-      <div className="mt-14">
-        <div className="flex justify-between items-center mb-4">
+      <section className="mt-14">
+        <header className="flex justify-between items-center mb-4">
           <button
             onClick={toggleModal}
             className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
           >
             Adicionar Academia
           </button>
-        </div>
+        </header>
 
-        <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-[#00BB83] text-white">
-              <th className="border border-gray-300 px-4 py-2 rounded-tl-md text-left animate__animated animate__fadeIn">
-                ID
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
-                Nome Academia
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
-                Dono
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-2s">
-                Email Dono
-              </th>
-              <th className="border border-gray-300 px-4 py-2 rounded-tr-md text-left animate__animated animate__fadeIn animate__delay-2s">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {academias.map((academia, index) => (
-              <tr
-                key={index}
-                className="bg-[#101010] animate__animated animate__fadeIn animate__delay-3s"
-              >
-                <td className="border border-[#252525] px-4 py-2">
-                  {academia.id}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {academia.name}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {academia.owner}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {academia.ownerEmail}
-                </td>
-                <td className="border border-[#252525] p-2 text-center flex justify-center items-center space-x-2">
-                  <button
-                    onClick={() => editAcademia(academia)}
-                    className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center"
-                  >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    onClick={() => deleteAcademia(academia.id)}
-                    className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center"
-                  >
-                    <span className="material-icons">delete</span>
-                  </button>
-                  <button
-                    onClick={() =>
-                      toggleBlockAcademia(academia.id, academia.blocked)
-                    }
-                    className={`bg-yellow-600 text-white p-3 w-10 h-10 rounded-full hover:bg-yellow-800 flex items-center justify-center ${
-                      academia.blocked ? "bg-gray-600" : ""
-                    }`}
-                    disabled={false}
-                  >
-                    <span className="material-icons">
-                      {academia.blocked ? "lock_open" : "lock"}
-                    </span>
-                  </button>
-                </td>
+        <article>
+          <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden">
+            <thead>
+              <tr className="bg-[#00BB83] text-white">
+                <th className="border border-gray-300 px-4 py-2 rounded-tl-md text-left animate__animated animate__fadeIn">
+                  ID
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
+                  Nome Academia
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
+                  Dono
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-2s">
+                  Email Dono
+                </th>
+                <th className="border border-gray-300 px-4 py-2 rounded-tr-md text-left animate__animated animate__fadeIn animate__delay-2s">
+                  Ações
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {academias.map((academia, index) => (
+                <tr
+                  key={index}
+                  className="bg-[#101010] animate__animated animate__fadeIn animate__delay-3s"
+                >
+                  <td className="border border-[#252525] px-4 py-2">
+                    {academia.id}
+                  </td>
+                  <td className="border border-[#252525] px-4 py-2">
+                    {academia.name}
+                  </td>
+                  <td className="border border-[#252525] px-4 py-2">
+                    {academia.owner}
+                  </td>
+                  <td className="border border-[#252525] px-4 py-2">
+                    {academia.ownerEmail}
+                  </td>
+                  <td className="border border-[#252525] p-2 text-center flex justify-center items-center space-x-2">
+                    <button
+                      onClick={() => editAcademia(academia)}
+                      className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center"
+                    >
+                      <span className="material-icons">edit</span>
+                    </button>
+                    <button
+                      onClick={() => deleteAcademia(academia.id)}
+                      className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center"
+                    >
+                      <span className="material-icons">delete</span>
+                    </button>
+                    <button
+                      onClick={() =>
+                        toggleBlockAcademia(academia.id, academia.blocked)
+                      }
+                      className={`bg-yellow-600 text-white p-3 w-10 h-10 rounded-full hover:bg-yellow-800 flex items-center justify-center ${
+                        academia.blocked ? "bg-gray-600" : ""
+                      }`}
+                      disabled={false}
+                    >
+                      <span className="material-icons">
+                        {academia.blocked ? "lock_open" : "lock"}
+                      </span>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </article>
+      </section>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-[#101010] p-6 rounded-md shadow-lg w-1/3 animate__animated animate__fadeIn">
-            <h3 className="text-lg font-bold mb-4">
-              {isEditing ? "Editar Academia" : "Adicionar Academia"}
-            </h3>
+            <header>
+              <h3 className="text-lg font-bold mb-4">
+                {isEditing ? "Editar Academia" : "Adicionar Academia"}
+              </h3>
+            </header>
             <form>
               <div className="mb-4">
                 <label
@@ -397,6 +399,6 @@ export default function AcademiaScreen() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

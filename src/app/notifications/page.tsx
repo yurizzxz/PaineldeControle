@@ -184,7 +184,7 @@ export default function Notifications() {
         <div>
           <button
             onClick={openModal}
-            className="bg-[#00BB83] text-white py-3 px-6 rounded-md hover:bg-[#008f6a] transition duration-300"
+            className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
           >
             Criar Notificação
           </button>
