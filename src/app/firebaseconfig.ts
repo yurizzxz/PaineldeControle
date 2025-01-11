@@ -13,7 +13,7 @@ import {
   setDoc,
   query, where,
 } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, } from "firebase/auth";
+import { getAuth, onAuthStateChanged, } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,

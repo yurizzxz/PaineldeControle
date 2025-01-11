@@ -87,8 +87,8 @@ export default function Notifications() {
     if (academies.length > 0) {
       fetchNotifications();
     }
-  }, [academies]);
-
+  }, [academies, fetchNotifications]);
+  
   const openModal = () => {
     setNewNotification({
       description: "",

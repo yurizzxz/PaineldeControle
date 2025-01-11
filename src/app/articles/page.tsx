@@ -12,6 +12,7 @@ import {
   doc,
   deleteDoc,
   onSnapshot,
+  DocumentSnapshot
 } from "firebase/firestore";
 import { db } from "../firebaseconfig";
 import SuccessMessage from "../_components/SucessMessage/sucessMessage";
@@ -33,8 +34,7 @@ export default function Artigos() {
     categoria: "",
   });
   const [artigos, setArtigos] = useState<Artigo[]>([]);
-  const [lastVisible, setLastVisible] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const ITEMS_PER_PAGE = 6;
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -73,7 +73,6 @@ export default function Artigos() {
     } catch (error) {
       console.error("Erro ao buscar artigos");
     } finally {
-      setLoading(false);
       setLoadingMore(false);
     }
   };

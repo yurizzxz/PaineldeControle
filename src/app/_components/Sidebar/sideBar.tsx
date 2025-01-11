@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { auth, db, collection, doc, getDoc, getDocs, onAuthStateChanged, query, where } from "@/app/firebaseconfig";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Inicializa como aberto
@@ -76,8 +78,10 @@ export default function Sidebar() {
               isCollapsed ? "h-9 w-9" : "h-20 w-20"
             }`}
           >
-            <img
-              src="./logo-verde.png"
+            <Image
+              src="/logo-verde.png"
+              width={100}
+              height={100}
               alt="Foto do Usuário"
               className="object-cover w-full h-full"
             />
@@ -94,7 +98,7 @@ export default function Sidebar() {
       <nav className="flex-1 w-full px-4 overflow-y-auto">
         <ul className="space-y-7">
           <li>
-            <a
+            <Link
               href="/home"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Home"
@@ -108,10 +112,10 @@ export default function Sidebar() {
                 home
               </span>
               {!isCollapsed && <span className="text-white text-[.95rem]">Home</span>}
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/gyms"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Gyms"
@@ -125,10 +129,10 @@ export default function Sidebar() {
                 fitness_center
               </span>
               {!isCollapsed && <span className="text-white text-[.95rem]">Gyms</span>}
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/admins"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Adminstradoes"
@@ -142,11 +146,11 @@ export default function Sidebar() {
                 person
               </span>
               {!isCollapsed && <span className="text-white text-[.95rem]">Adminstradoes</span>}
-            </a>
+            </Link>
           </li>
 
           <li>
-            <a
+            <Link
               href="/notifications"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Notificações"
@@ -160,10 +164,10 @@ export default function Sidebar() {
                 notifications
               </span>
               {!isCollapsed && <span className="text-white text-[.95rem]">Notificações</span>}
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/articles"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Artigos"
@@ -177,13 +181,13 @@ export default function Sidebar() {
                 article
               </span>
               {!isCollapsed && <span className="text-white text-[.95rem]">Artigos</span>}
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>
 
       <footer className="mt-8 w-full px-4">
-        <a
+        <Link
           href="/login"
           className="flex items-center space-x-7 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
           aria-label="Sair"
@@ -197,7 +201,7 @@ export default function Sidebar() {
             logout
           </span>
           {!isCollapsed && <span className="text-white text-[.95rem]">Sair</span>}
-        </a>
+        </Link>
       </footer>
     </aside>
   );

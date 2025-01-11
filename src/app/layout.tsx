@@ -50,7 +50,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-col md:flex-row h-full min-h-screen overflow-auto">
+        <div className="flex fixed w-full flex-col md:flex-row h-full min-h-screen overflow-auto">
           {!shouldHideSidebar && (
             <div className="flex-shrink-0 overflow-hidden">
               <Sidebar />

@@ -4,7 +4,11 @@ import type { NextRequest } from "next/server";
 const protectedRoutes = ["/home", "/gyms", "/articles", "/admins", "/notifications"];
 
 export function middleware(request: NextRequest) {
+  console.log("Request URL:", request.url);
+  console.log("Request Pathname:", request.nextUrl.pathname);
+  
   const token = request.cookies.get("authToken")?.value;
+  console.log("Token:", token);
 
   if (protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))) {
     if (!token) {
@@ -15,6 +19,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+
 export const config = {
-  matcher: ["/home/:path*", "/gyms/:path*", "/articles/:path*"], 
+  matcher: ["/home/:path*", "/admins/:path*", "/gyms/:path*", "/articles/:path*", "/notifications/:path*"],
 };
