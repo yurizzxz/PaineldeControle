@@ -40,10 +40,9 @@ export default function RootLayout({
         </title>
         <meta
           name="description"
-          content={
-            pathname === "/login"
-              ? "Faça login para acessar sua conta."
-              : "Bem-vindo ao painel da sua aplicação."
+          content={pathname === "/login"
+            ? "Faça login para acessar sua conta."
+            : "Bem-vindo ao painel da sua aplicação."
           }
         />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
@@ -51,14 +50,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-row h-screen overflow-auto">
+        <div className="flex flex-col md:flex-row h-full min-h-screen overflow-auto">
           {!shouldHideSidebar && (
-            <div className="flex-shrink-0 overflow-y-hidden">
+            <div className="flex-shrink-0 overflow-hidden">
               <Sidebar />
             </div>
           )}
           <div
-            className={`flex-1 ${hasPadding ? "p-[60px]" : ""} overflow-auto`}
+            className={`flex-1 ${hasPadding ? "p-[60px]" : "p-4"} overflow-auto h-full`}
           >
             {children}
           </div>

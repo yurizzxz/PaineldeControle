@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db, collection, getDocs, query, where } from "@/app/firebaseconfig";
 import Link from "next/link";
@@ -10,6 +11,17 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        router.push("/home");
+      }
+    };
+    checkUser();
+  }, [router]);
 
   const handleLogin = async () => {
     try {
@@ -31,7 +43,7 @@ export default function Login() {
       await signInWithEmailAndPassword(auth, email, senha);
 
       setTimeout(() => {
-        window.location.href = "/home";
+        router.push("/home");
       }, 1000);
     } catch (error: any) {
       alert("Erro no login: " + error.message);
@@ -94,7 +106,6 @@ export default function Login() {
         >
           Entrar
         </button>
-
       </div>
     </div>
   );

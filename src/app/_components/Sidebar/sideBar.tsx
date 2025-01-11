@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { auth, db, collection, doc, getDoc, getDocs, onAuthStateChanged, query, where } from "@/app/firebaseconfig";
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState<boolean | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false); // Inicializa como aberto
   const [userName, setUserName] = useState<string>("Usuário");
   const [userEmail, setUserEmail] = useState<string>("Email não encontrado");
 
@@ -48,10 +48,6 @@ export default function Sidebar() {
     return () => unsubscribe();
   }, []);
 
-  if (isCollapsed === null) {
-    return null;
-  }
-
   const toggleSidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
@@ -60,11 +56,9 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-screen ${
+      className={`h-screen flex flex-col py-10 bg-[#0a0a0a] border-r-2 border-[#252525] ${
         isCollapsed ? "w-20" : "w-80"
-      } bg-[#0a0a0a] text-white flex border-r-2 border-[#252525] flex-col py-10 transition-all duration-300 ease-in-out transform ${
-        isCollapsed ? "translate-x-[-100%]" : "translate-x-0"
-      } sm:translate-x-0`}
+      } transition-all duration-300 ease-in-out`}
     >
       <header className="flex flex-col pl-5 pb-14 mb-10 border-b border-[#101010]">
         <button
@@ -72,7 +66,7 @@ export default function Sidebar() {
           onClick={toggleSidebar}
         >
           <span className="material-icons" style={{ fontSize: "25px" }}>
-            {isCollapsed ? "menu" : "menu"}
+            {isCollapsed ? "menu" : "menu_open"}
           </span>
         </button>
 
@@ -97,7 +91,7 @@ export default function Sidebar() {
         </div>
       </header>
 
-      <nav className="flex-1 w-full px-3.5">
+      <nav className="flex-1 w-full px-4 overflow-y-auto">
         <ul className="space-y-7">
           <li>
             <a
@@ -109,7 +103,7 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem"  }}
+                style={{ fontSize: "1.5rem" }}
               >
                 home
               </span>
@@ -119,7 +113,7 @@ export default function Sidebar() {
           <li>
             <a
               href="/gyms"
-              className="flex items-center space-x-7  space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Gyms"
             >
               <span
@@ -137,7 +131,7 @@ export default function Sidebar() {
             <a
               href="/admins"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
-              aria-label="Gyms"
+              aria-label="Adminstradoes"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
@@ -155,7 +149,7 @@ export default function Sidebar() {
             <a
               href="/notifications"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
-              aria-label="Notificações"	
+              aria-label="Notificações"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
@@ -172,7 +166,7 @@ export default function Sidebar() {
             <a
               href="/articles"
               className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
-              aria-label="Notificações"	
+              aria-label="Artigos"
             >
               <span
                 className={`material-icons transform transition-all duration-300 ${
