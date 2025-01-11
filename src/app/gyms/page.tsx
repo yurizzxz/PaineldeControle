@@ -39,10 +39,6 @@ export default function AcademiaScreen() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const showSuccessMessage = (message: string): void => {
-    setSuccessMessage(message);
-  };
-
   const closeSuccessMessage = (): void => {
     setSuccessMessage(null);
   };
@@ -361,27 +357,50 @@ export default function AcademiaScreen() {
                   className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
               </div>
+              {!isEditing && (
+                <div className="mb-4">
+                  <label
+                    className="block text-sm font-medium mb-1"
+                    htmlFor="password"
+                  >
+                    Senha
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={newAcademia.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
+                  />
+                </div>
+              )}
               <div className="mb-4">
                 <label
                   className="block text-sm font-medium mb-1"
-                  htmlFor="password"
+                  htmlFor="blocked"
                 >
-                  Senha
+                  Bloqueada
                 </label>
                 <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={newAcademia.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
+                  type="checkbox"
+                  id="blocked"
+                  name="blocked"
+                  checked={newAcademia.blocked}
+                  onChange={(e) =>
+                    setNewAcademia((prev) => ({
+                      ...prev,
+                      blocked: e.target.checked,
+                    }))
+                  }
+                  className="w-6 h-6"
                 />
               </div>
-              <div className="flex justify-end gap-4">
+              <footer className="flex justify-end space-x-2">
                 <button
                   type="button"
                   onClick={toggleModal}
-                  className="bg-[#1a1a1a] border border-[#252525] px-4 py-2 rounded-md"
+                  className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
                 >
                   Cancelar
                 </button>
@@ -390,9 +409,9 @@ export default function AcademiaScreen() {
                   onClick={saveAcademia}
                   className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966]"
                 >
-                  Salvar
+                  {isEditing ? "Atualizar" : "Adicionar"}
                 </button>
-              </div>
+              </footer>
             </form>
           </div>
         </div>

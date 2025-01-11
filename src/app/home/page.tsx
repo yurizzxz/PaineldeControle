@@ -18,7 +18,6 @@ interface ReportError {
 
 export default function HomeScreen() {
   const [userName, setUserName] = useState("Usuário");
-  const [userEmail, setUserEmail] = useState("Email não encontrado");
   const [reportErrors, setReportErrors] = useState<ReportError[]>([]);
 
   const quickLinks = [
@@ -43,8 +42,6 @@ export default function HomeScreen() {
     const fetchUserData = async (user: User | null) => {
       try {
         if (user) {
-          setUserEmail(user.email || "Email não encontrado");
-
           const adminsRef = collection(db, "admins");
           const adminQuery = query(adminsRef, where("email", "==", user.email));
           const adminSnapshot = await getDocs(adminQuery);
