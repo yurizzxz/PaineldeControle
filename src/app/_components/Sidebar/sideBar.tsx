@@ -107,11 +107,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 home
               </span>
-              {!isCollapsed && <span className="text-white text-[.95rem]">Home</span>}
+              {!isCollapsed && <span className="text-white text-[.90rem]">Home</span>}
             </Link>
           </li>
           <li>
@@ -124,11 +124,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 fitness_center
               </span>
-              {!isCollapsed && <span className="text-white text-[.95rem]">Gyms</span>}
+              {!isCollapsed && <span className="text-white text-[.90rem]">Gyms</span>}
             </Link>
           </li>
           <li>
@@ -141,11 +141,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 person
               </span>
-              {!isCollapsed && <span className="text-white text-[.95rem]">Adminstradoes</span>}
+              {!isCollapsed && <span className="text-white text-[.90rem]">Adminstradoes</span>}
             </Link>
           </li>
 
@@ -159,11 +159,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 notifications
               </span>
-              {!isCollapsed && <span className="text-white text-[.95rem]">Notificações</span>}
+              {!isCollapsed && <span className="text-white text-[.90rem]">Notificações</span>}
             </Link>
           </li>
           <li>
@@ -176,11 +176,11 @@ export default function Sidebar() {
                 className={`material-icons transform transition-all duration-300 ${
                   !isCollapsed ? "translate-x-2" : ""
                 }`}
-                style={{ fontSize: "1.5rem" }}
+                style={{ fontSize: "1.3rem" }}
               >
                 article
               </span>
-              {!isCollapsed && <span className="text-white text-[.95rem]">Artigos</span>}
+              {!isCollapsed && <span className="text-white text-[.90rem]">Artigos</span>}
             </Link>
           </li>
         </ul>
@@ -200,7 +200,7 @@ export default function Sidebar() {
           >
             logout
           </span>
-          {!isCollapsed && <span className="text-white text-[.95rem]">Sair</span>}
+          {!isCollapsed && <span className="text-white text-[.90rem]">Sair</span>}
         </Link>
       </footer>
     </aside>

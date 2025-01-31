@@ -10,6 +10,7 @@ import {
   updateDoc,
   getDocs,
   setDoc,
+  onSnapshot,
 } from "../firebaseconfig";
 import bcrypt from "bcryptjs";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -26,7 +27,8 @@ interface Academia {
   password: string;
   blocked: boolean;
   payment: boolean;
-  planValue: number;
+  planName: string;
+  planDurationMonths: number;
   planEndDate: string;
 }
 
@@ -41,7 +43,8 @@ export default function AcademiaScreen() {
     password: "",
     blocked: false,
     payment: false,
-    planValue: 0,
+    planName: "",
+    planDurationMonths: 0,
     planEndDate: "",
   });
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -80,7 +83,8 @@ export default function AcademiaScreen() {
         password: "",
         blocked: false,
         payment: false,
-        planValue: 0,
+        planName: "",
+        planDurationMonths: 0,
         planEndDate: "",
       });
     }
@@ -105,10 +109,8 @@ export default function AcademiaScreen() {
           password: hashedPassword,
           blocked: newAcademia.blocked,
           payment: newAcademia.payment,
-          planValue:
-            typeof newAcademia.planValue === "string"
-              ? parseFloat(newAcademia.planValue)
-              : newAcademia.planValue,
+          planName: newAcademia.planName,
+          planDurationMonths: newAcademia.planDurationMonths,
           planEndDate: newAcademia.planEndDate,
         });
 
@@ -137,10 +139,8 @@ export default function AcademiaScreen() {
             password: hashedPassword,
             blocked: newAcademia.blocked,
             payment: newAcademia.payment,
-            planValue:
-              typeof newAcademia.planValue === "string"
-                ? parseFloat(newAcademia.planValue)
-                : newAcademia.planValue,
+            planName: newAcademia.planName,
+            planDurationMonths: newAcademia.planDurationMonths,
             planEndDate: newAcademia.planEndDate,
           });
 
@@ -162,7 +162,8 @@ export default function AcademiaScreen() {
         password: "",
         blocked: false,
         payment: false,
-        planValue: 0,
+        planName: "",
+        planDurationMonths: 0,
         planEndDate: "",
       });
       toggleModal();
@@ -242,27 +243,47 @@ export default function AcademiaScreen() {
       return diffDays <= 30 && diffDays > 0;
     });
   };
-  
 
-  const [paymentStatus, setPaymentStatus] = useState<{ [key: string]: boolean }>(
+  const [paymentStatus, setPaymentStatus] = useState<{
+    [key: string]: boolean;
+  }>(
     academias.reduce((acc, academia) => {
       acc[academia.id] = academia.payment;
       return acc;
     }, {} as { [key: string]: boolean })
   );
-  
+
+  useEffect(() => {
+    const fetchPaymentStatus = async () => {
+      const paymentStatusMap: { [key: string]: boolean } = {};
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "academias"));
+        querySnapshot.forEach((doc) => {
+          const academia = doc.data() as Academia;
+          paymentStatusMap[doc.id] = academia.payment;
+        });
+
+        setPaymentStatus(paymentStatusMap); 
+      } catch (e) {
+        console.error("Erro ao buscar status de pagamento: ", e);
+      }
+    };
+
+    fetchPaymentStatus(); 
+  }, []); 
 
   const savePaymentStatus = async (id: string): Promise<void> => {
     try {
       const newPaymentStatus = !paymentStatus[id];
       const academiaRef = doc(db, "academias", id);
-      await updateDoc(academiaRef, { payment: newPaymentStatus });
-  
+      await updateDoc(academiaRef, { payment: newPaymentStatus }); 
+
       setPaymentStatus((prev) => ({
         ...prev,
-        [id]: newPaymentStatus,
+        [id]: newPaymentStatus, 
       }));
-  
+
       setSuccessMessage(
         `Pagamento ${newPaymentStatus ? "concluído" : "pendente"} com sucesso!`
       );
@@ -270,7 +291,6 @@ export default function AcademiaScreen() {
       console.error("Erro ao alterar status de pagamento: ", e);
     }
   };
-
   const columns = [
     {
       key: "id",
@@ -282,7 +302,7 @@ export default function AcademiaScreen() {
     { key: "name", label: "Nome Academia" },
     { key: "owner", label: "Dono" },
     { key: "ownerEmail", label: "Email Dono" },
-    { key: "planValue", label: "Valor Plano" },
+    { key: "planName", label: "Plano" },
     { key: "planEndDate", label: "Fim do Plano" },
     {
       key: "actions",
@@ -293,13 +313,17 @@ export default function AcademiaScreen() {
             onClick={() => editAcademia(row)}
             className="bg-[#00BB83] text-white p-3 w-8 h-8 rounded-full hover:bg-[#009966] flex items-center justify-center"
           >
-            <span className="material-icons"  style={{ fontSize: "1.3rem" }}>edit</span>
+            <span className="material-icons" style={{ fontSize: "1.3rem" }}>
+              edit
+            </span>
           </button>
           <button
             onClick={() => deleteAcademia(row.id)}
             className="bg-red-600 text-white p-3 w-8 h-8 rounded-full hover:bg-red-800 flex items-center justify-center"
           >
-            <span className="material-icons" style={{ fontSize: "1.3rem" }}>delete</span>
+            <span className="material-icons" style={{ fontSize: "1.3rem" }}>
+              delete
+            </span>
           </button>
           <button
             onClick={() => toggleBlockAcademia(row.id, row.blocked)}
@@ -307,7 +331,7 @@ export default function AcademiaScreen() {
               row.blocked ? "bg-gray-600" : ""
             }`}
           >
-            <span className="material-icons"  style={{ fontSize: "1.3rem" }}>
+            <span className="material-icons" style={{ fontSize: "1.3rem" }}>
               {row.blocked ? "lock_open" : "lock"}
             </span>
           </button>
@@ -317,14 +341,15 @@ export default function AcademiaScreen() {
               paymentStatus[row.id] ? "bg-gray-600" : ""
             }`}
           >
-            <span className="material-icons"  style={{ fontSize: "1.3rem" }}>
+            <span className="material-icons" style={{ fontSize: "1.3rem" }}>
               {paymentStatus[row.id] ? "attach_money" : "money_off"}
             </span>
           </button>
         </div>
       ),
     },
-    {key: "paymentStatus",
+    {
+      key: "paymentStatus",
       label: "Pagamento",
       render: (value: boolean, row: Academia) => (
         <span className="flex items-center">
@@ -336,7 +361,7 @@ export default function AcademiaScreen() {
           </span>
         </span>
       ),
-    }
+    },
   ];
 
   return (
@@ -427,15 +452,31 @@ export default function AcademiaScreen() {
               <div className="mb-4">
                 <label
                   className="block text-sm font-medium mb-1"
-                  htmlFor="planValue"
+                  htmlFor="planName"
                 >
-                  Valor do Plano
+                  Nome do Plano
+                </label>
+                <input
+                  type="text"
+                  id="planName"
+                  name="planName"
+                  value={newAcademia.planName}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="planDurationMonths"
+                >
+                  Quantidade de Meses
                 </label>
                 <input
                   type="number"
-                  id="planValue"
-                  name="planValue"
-                  value="{newAcademia.planValue}"
+                  id="planDurationMonths"
+                  name="planDurationMonths"
+                  value={newAcademia.planDurationMonths}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 bg-[#101010] border border-[#252525] rounded-md"
                 />
