@@ -19,6 +19,8 @@ import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
 import Table from "../_components/Table/table";
 import Button from "../_components/Button/button";
 
+import useAcademias from "../_hooks/useAcademia";
+
 interface Academia {
   id: string;
   name: string;
@@ -33,264 +35,26 @@ interface Academia {
 }
 
 export default function AcademiaScreen() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [academias, setAcademias] = useState<Academia[]>([]);
-  const [newAcademia, setNewAcademia] = useState<Academia>({
-    id: "",
-    name: "",
-    owner: "",
-    ownerEmail: "",
-    password: "",
-    blocked: false,
-    payment: false,
-    planName: "",
-    planDurationMonths: 0,
-    planEndDate: "",
-  });
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  const {
+    academias,
+    successMessage,
+    isModalOpen,
+    newAcademia,
+    setNewAcademia,
+    isEditing,
+    paymentStatus,
+    toggleModal,
+    handleInputChange,
+    saveAcademia,
+    closeSuccessMessage,
+    editAcademia,
+    deleteAcademia,
+    toggleBlockAcademia,
+    savePaymentStatus,
+    filterExpiringPlans,
+  } = useAcademias();
 
-  const closeSuccessMessage = (): void => {
-    setSuccessMessage(null);
-  };
-
-  useEffect(() => {
-    const fetchAcademias = async (): Promise<void> => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "academias"));
-        const academiasList: Academia[] = [];
-        querySnapshot.forEach((doc) => {
-          const academia = doc.data() as Academia;
-          academiasList.push(Object.assign({ id: doc.id }, academia));
-        });
-        setAcademias(academiasList);
-      } catch (e) {
-        console.error("Erro ao buscar academias: ", e);
-      }
-    };
-
-    fetchAcademias();
-  }, []);
-
-  const toggleModal = (): void => {
-    if (isModalOpen) {
-      setIsEditing(false);
-      setNewAcademia({
-        id: "",
-        name: "",
-        owner: "",
-        ownerEmail: "",
-        password: "",
-        blocked: false,
-        payment: false,
-        planName: "",
-        planDurationMonths: 0,
-        planEndDate: "",
-      });
-    }
-    setIsModalOpen(!isModalOpen);
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
-    setNewAcademia((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const saveAcademia = async (): Promise<void> => {
-    try {
-      const hashedPassword = await bcrypt.hash(newAcademia.password, 10);
-
-      if (isEditing) {
-        const academiaRef = doc(db, "academias", newAcademia.id);
-        await updateDoc(academiaRef, {
-          name: newAcademia.name,
-          owner: newAcademia.owner,
-          ownerEmail: newAcademia.ownerEmail,
-          password: hashedPassword,
-          blocked: newAcademia.blocked,
-          payment: newAcademia.payment,
-          planName: newAcademia.planName,
-          planDurationMonths: newAcademia.planDurationMonths,
-          planEndDate: newAcademia.planEndDate,
-        });
-
-        const userRef = doc(db, "users", newAcademia.id);
-        await updateDoc(userRef, {
-          name: newAcademia.owner,
-          email: newAcademia.ownerEmail,
-          password: hashedPassword,
-        });
-      } else {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          newAcademia.ownerEmail,
-          newAcademia.password
-        );
-        const user = userCredential.user;
-
-        if (user) {
-          const uid = user.uid;
-
-          const academiaRef = doc(db, "academias", uid);
-          await setDoc(academiaRef, {
-            name: newAcademia.name,
-            owner: newAcademia.owner,
-            ownerEmail: newAcademia.ownerEmail,
-            password: hashedPassword,
-            blocked: newAcademia.blocked,
-            payment: newAcademia.payment,
-            planName: newAcademia.planName,
-            planDurationMonths: newAcademia.planDurationMonths,
-            planEndDate: newAcademia.planEndDate,
-          });
-
-          const userRef = doc(db, "users", uid);
-          await setDoc(userRef, {
-            name: newAcademia.owner,
-            email: newAcademia.ownerEmail,
-          });
-
-          setAcademias((prev) => [...prev, { ...newAcademia, id: uid }]);
-        }
-      }
-
-      setNewAcademia({
-        id: "",
-        name: "",
-        owner: "",
-        ownerEmail: "",
-        password: "",
-        blocked: false,
-        payment: false,
-        planName: "",
-        planDurationMonths: 0,
-        planEndDate: "",
-      });
-      toggleModal();
-      setSuccessMessage(
-        isEditing
-          ? "Academia atualizada com sucesso!"
-          : "Academia adicionada com sucesso!"
-      );
-    } catch (e) {
-      console.error("Erro ao salvar academia: ", e);
-    }
-  };
-
-  const deleteAcademia = async (id: string): Promise<void> => {
-    const confirmDelete = window.confirm(
-      "Tem certeza que deseja excluir esta academia?"
-    );
-    if (confirmDelete) {
-      try {
-        const academiaRef = doc(db, "academias", id);
-        await deleteDoc(academiaRef);
-
-        const userRef = doc(db, "users", id);
-        await deleteDoc(userRef);
-
-        setAcademias((prev) => prev.filter((academia) => academia.id !== id));
-        setSuccessMessage("Academia excluída com sucesso!");
-      } catch (e) {
-        console.error("Erro ao excluir academia: ", e);
-      }
-    }
-  };
-
-  const editAcademia = (academia: Academia): void => {
-    setNewAcademia(academia);
-    setIsEditing(true);
-    toggleModal();
-  };
-
-  const toggleBlockAcademia = async (
-    id: string,
-    currentStatus: boolean
-  ): Promise<void> => {
-    const action = currentStatus ? "desbloquear" : "bloquear";
-    const confirmAction = window.confirm(
-      `Tem certeza que deseja ${action} esta academia?`
-    );
-
-    if (confirmAction) {
-      try {
-        const academiaRef = doc(db, "academias", id);
-        await updateDoc(academiaRef, {
-          blocked: !currentStatus,
-        });
-
-        setAcademias((prev) =>
-          prev.map((academia) =>
-            academia.id === id
-              ? { ...academia, blocked: !currentStatus }
-              : academia
-          )
-        );
-
-        setSuccessMessage(`Academia ${action} com sucesso!`);
-      } catch (e) {
-        console.error(`Erro ao ${action} academia: `, e);
-      }
-    }
-  };
-
-  const filterExpiringPlans = (): Academia[] => {
-    const today = new Date();
-    return academias.filter((academia) => {
-      const planEndDate = new Date(academia.planEndDate);
-      const diffTime = planEndDate.getTime() - today.getTime();
-      const diffDays = diffTime / (1000 * 60 * 60 * 24);
-      return diffDays <= 30 && diffDays > 0;
-    });
-  };
-
-  const [paymentStatus, setPaymentStatus] = useState<{
-    [key: string]: boolean;
-  }>(
-    academias.reduce((acc, academia) => {
-      acc[academia.id] = academia.payment;
-      return acc;
-    }, {} as { [key: string]: boolean })
-  );
-
-  useEffect(() => {
-    const fetchPaymentStatus = async () => {
-      const paymentStatusMap: { [key: string]: boolean } = {};
-
-      try {
-        const querySnapshot = await getDocs(collection(db, "academias"));
-        querySnapshot.forEach((doc) => {
-          const academia = doc.data() as Academia;
-          paymentStatusMap[doc.id] = academia.payment;
-        });
-
-        setPaymentStatus(paymentStatusMap); 
-      } catch (e) {
-        console.error("Erro ao buscar status de pagamento: ", e);
-      }
-    };
-
-    fetchPaymentStatus(); 
-  }, []); 
-
-  const savePaymentStatus = async (id: string): Promise<void> => {
-    try {
-      const newPaymentStatus = !paymentStatus[id];
-      const academiaRef = doc(db, "academias", id);
-      await updateDoc(academiaRef, { payment: newPaymentStatus }); 
-
-      setPaymentStatus((prev) => ({
-        ...prev,
-        [id]: newPaymentStatus, 
-      }));
-
-      setSuccessMessage(
-        `Pagamento ${newPaymentStatus ? "concluído" : "pendente"} com sucesso!`
-      );
-    } catch (e) {
-      console.error("Erro ao alterar status de pagamento: ", e);
-    }
-  };
   const columns = [
     {
       key: "id",
@@ -528,10 +292,7 @@ export default function AcademiaScreen() {
                   name="blocked"
                   checked={newAcademia.blocked}
                   onChange={(e) =>
-                    setNewAcademia((prev) => ({
-                      ...prev,
-                      blocked: e.target.checked,
-                    }))
+                    setNewAcademia({ ...newAcademia, blocked: e.target.checked })
                   }
                   className="w-6 h-6"
                 />
