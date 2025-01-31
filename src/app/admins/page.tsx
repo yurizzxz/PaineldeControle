@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState, useEffect, ChangeEvent } from "react";
 import bcrypt from "bcryptjs";
 import Header from "@/app/_components/Header/header";
@@ -12,7 +12,13 @@ import {
   onSnapshot,
   setDoc,
 } from "../firebaseconfig";
-import { getAuth, createUserWithEmailAndPassword, updatePassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updatePassword,
+} from "firebase/auth";
+import Table from "../_components/Table/table";
+import Button from "../_components/Button/button";
 
 interface Admin {
   id: string;
@@ -141,7 +147,7 @@ export default function AdminScreen() {
         name: newAdminToAdd.name,
         email: newAdminToAdd.email,
         subRole: newAdminToAdd.subRole,
-        password: await bcrypt.hash(newAdminToAdd.password, 10), 
+        password: await bcrypt.hash(newAdminToAdd.password, 10),
       });
 
       setSuccessMessage("Administrador atualizado com sucesso!");
@@ -153,8 +159,37 @@ export default function AdminScreen() {
     }
   };
 
+  const columns = [
+    { key: "id", label: "ID", render: (value: string) => (
+      <span>{value.length > 10 ? `${value.substring(0, 10)}...` : value}</span>
+    )},
+    { key: "name", label: "Nome" },
+    { key: "email", label: "Email" },
+    { key: "subRole", label: "Cargo" },
+    {
+      key: "actions",
+      label: "Ações",
+      render: (_: string, row: Admin) => (
+        <div className="flex justify-center items-center space-x-2">
+          <button
+            onClick={() => editAdmin(row)}
+            className="bg-[#00BB83] text-white p-3 w-8 h-8 rounded-full hover:bg-[#009966] flex items-center justify-center"
+          >
+            <span className="material-icons"  style={{ fontSize: "1.3rem" }}>edit</span>
+          </button>
+          <button
+            onClick={() => deleteAdmin(row.id)}
+            className="bg-red-600 text-white p-3 w-8 h-8 rounded-full hover:bg-red-800 flex items-center justify-center"
+          >
+            <span className="material-icons"  style={{ fontSize: "1.3rem" }}>delete</span>
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div>
+    <main>
       <Header title="Lista de" block="Administradores" className="" />
       {successMessage && (
         <SuccessMessage
@@ -163,9 +198,9 @@ export default function AdminScreen() {
         />
       )}
 
-      <div className="mt-14">
+      <section className="mt-14">
         <div className="flex justify-between items-center mb-4">
-          <button
+          <Button
             onClick={() => {
               setNewAdminToAdd({
                 name: "",
@@ -176,69 +211,13 @@ export default function AdminScreen() {
               setNewAdmin(null);
               toggleModal();
             }}
-            className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
           >
             Adicionar Administrador
-          </button>
+          </Button>
         </div>
 
-        <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-[#00BB83] text-white">
-              <th className="border border-gray-300 px-4 py-2 rounded-tl-md text-left animate__animated animate__fadeIn">
-                ID
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
-                Nome Administrador
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-1s">
-                Email Administrador
-              </th>
-              <th className="border border-gray-300 px-4 py-2 text-left animate__animated animate__fadeIn animate__delay-2s">
-                Cargo
-              </th>
-              <th className="border border-gray-300 px-4 py-2 rounded-tr-md text-left animate__animated animate__fadeIn animate__delay-2s">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map((admin, index) => (
-              <tr
-                key={index}
-                className="bg-[#101010] animate__animated animate__fadeIn animate__delay-3s"
-              >
-                <td className=" border border-[#252525] px-4 py-2">
-                  {admin.id}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {admin.name}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {admin.email}
-                </td>
-                <td className="border border-[#252525] px-4 py-2">
-                  {admin.subRole}
-                </td>
-                <td className="border border-[#252525] p-2 text-center flex justify-center items-center space-x-2">
-                  <button
-                    onClick={() => editAdmin(admin)}
-                    className="bg-[#00BB83] text-white p-3 w-10 h-10 rounded-full hover:bg-[#009966] flex items-center justify-center"
-                  >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    onClick={() => deleteAdmin(admin.id)}
-                    className="bg-red-600 text-white p-3 w-10 h-10 rounded-full hover:bg-red-800 flex items-center justify-center"
-                  >
-                    <span className="material-icons">delete</span>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+        <Table data={admins} columns={columns} />
+      </section>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -339,6 +318,6 @@ export default function AdminScreen() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

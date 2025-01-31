@@ -17,6 +17,7 @@ import {
 import { db } from "../firebaseconfig";
 import SuccessMessage from "../_components/SucessMessage/sucessMessage";
 import Header from "../_components/Header/header";
+import Button from "../_components/Button/button";
 
 interface Artigo {
   id: string;
@@ -178,18 +179,17 @@ export default function Artigos() {
       )}
 
       <div className="container mt-6 py-6">
-        <button
+        <Button
           onClick={() => openModal()}
-          className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
         >
           Adicionar Artigo
-        </button>
+        </Button>
 
-        <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
           {artigos.map((artigo) => (
             <div
               key={artigo.id}
-              className="bg-[#101010] p-8 gap-2 flex flex-col rounded-md border border-[#252525] relative"
+              className="bg-[#101010] p-6 gap-2 flex flex-col rounded-md border border-[#252525] relative"
             >
               <div className="flex justify-between items-start">
                 <h3 className="text-white font-bold pr-5 text-xl py-1">

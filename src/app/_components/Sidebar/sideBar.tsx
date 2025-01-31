@@ -62,7 +62,7 @@ export default function Sidebar() {
         isCollapsed ? "w-20" : "w-80"
       } transition-all duration-300 ease-in-out`}
     >
-      <header className="flex flex-col pl-5 pb-14 mb-10 border-b border-[#101010]">
+      <header className="flex flex-col pl-5 pb-14  border-b border-[#101010]">
         <button
           className="fixed top-5 flex items-center p-1.5 transition-all rounded-full duration-300 hover:bg-[#00BB83] hover:text-white text-white focus:outline-none"
           onClick={toggleSidebar}
@@ -96,7 +96,7 @@ export default function Sidebar() {
       </header>
 
       <nav className="flex-1 w-full px-4 overflow-y-auto">
-        <ul className="space-y-7">
+        <ul className="space-y-4">
           <li>
             <Link
               href="/home"

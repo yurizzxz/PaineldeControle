@@ -12,6 +12,7 @@ import {
 } from "@/app/firebaseconfig";
 import Header from "@/app/_components/Header/header";
 import SuccessMessage from "@/app/_components/SucessMessage/sucessMessage";
+import Button from "../_components/Button/button";
 
 interface Notification {
   id?: string;
@@ -149,7 +150,7 @@ export default function Notifications() {
     } else {
       console.error("No notification found with id:", id);
     }
-};
+  };
 
   const handleUpdateNotification = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -186,12 +187,7 @@ export default function Notifications() {
       )}
       <div className="mt-6 py-6">
         <div>
-          <button
-            onClick={openModal}
-            className="bg-[#00BB83] text-white px-4 py-2 rounded-md hover:bg-[#009966] transition"
-          >
-            Criar Notificação
-          </button>
+          <Button onClick={openModal}>Criar Notificação</Button>
         </div>
 
         <div className="mt-6">
@@ -202,7 +198,8 @@ export default function Notifications() {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className="bg-[#101010] border border-[#252525] p-6 rounded-md transition duration-300"
+                  className="bg-[#101010] border border-[#252525] p-6 rounded-md transition duration-300 
+                           sm:p-4 md:p-6 lg:p-6"
                 >
                   <div className="flex justify-between items-center">
                     <h3 className="text-white font-bold text-xl py-1">
@@ -230,10 +227,10 @@ export default function Notifications() {
                     {notification.description}
                   </p>
                   <p className="text-[#00BB83] font-bold flex align-center items-center gap-2 py-2">
-                    Usuário:{" "}
-                    <span className="text-white py-2">
-                      {notification.userAttribute}
-                    </span>
+                    Usuário:
+                  </p>
+                  <p className="text-white mb-4">
+                    {notification.userAttribute}
                   </p>
                   <p className="text-white">Data: {notification.data}</p>
                 </div>
