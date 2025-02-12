@@ -80,16 +80,16 @@ export default function HomeScreen() {
     <main>
       <Header title="Bem-vindo," block={userName} className="" />
 
-      <section className="mt-6 py-6">
-        <h2 className="font-bold mb-4 text-white" style={{ fontSize: "1.5rem" }}>Acesso Rápido</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="mt-4 py-4">
+        <h2 className="font-bold mb-3 text-white" style={{ fontSize: "1.25rem" }}>Acesso Rápido</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickLinks.map((link, index) => (
-            <div key={index} className="bg-[#101010] border border-[#252525] p-6 rounded-md transition duration-300">
-              <div className="flex items-center justify-center mb-4">
-                <span className="material-icons text-[#00BB83]" style={{ fontSize: "4rem" }}>{link.icon}</span>
+            <div key={index} className="bg-[#101010] border border-[#252525] p-4 rounded-md transition duration-300">
+              <div className="flex items-center justify-center mb-3">
+                <span className="material-icons text-[#00BB83]" style={{ fontSize: "3rem" }}>{link.icon}</span>
               </div>
-              <h3 className="text-center font-bold text-white text-lg">{link.title}</h3>
-              <Link href={link.link} className="block text-center font-bold text-[#00BB83] hover:text-[#008f6a] mt-2">
+              <h3 className="text-center font-bold text-white text-sm">{link.title}</h3>
+              <Link href={link.link} className="block text-center font-bold text-[#00BB83] hover:text-[#008f6a] mt-1 text-sm">
                 Acessar
               </Link>
             </div>
@@ -97,24 +97,24 @@ export default function HomeScreen() {
         </div>
       </section>
 
-      <section className="mt-6 py-6">
-        <h2 className="mb-4 font-bold text-white" style={{ fontSize: "1.5rem" }}>Relatórios de Erros</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="mt-4 py-4">
+        <h2 className="mb-3 font-bold text-white" style={{ fontSize: "1.25rem" }}>Relatórios de Erros</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {reportErrors.length > 0 ? (
             reportErrors.map((error, index) => (
-              <div key={index} className="bg-[#101010] p-8 gap-2 flex flex-col rounded-md border border-[#252525]">
-                <div className="flex flex-col gap-2 mb-4">
-                  <p className="text-white text-xl font-bold">Usuário:</p>
-                  <p className="text-white text-md">{error.name}</p>
+              <div key={index} className="bg-[#101010] p-6 gap-2 flex flex-col rounded-md border border-[#252525]">
+                <div className="flex flex-col gap-2 mb-3">
+                  <p className="text-white text-lg font-bold">Usuário:</p>
+                  <p className="text-white text-sm">{error.name}</p>
                 </div>
-                <p className="text-white font-semibold">Descrição:</p>
-                <p className="text-[#00BB83]">{error.description}</p>
-                <p className="text-white font-semibold mt-2">Email:</p>
-                <p className="text-[#00BB83]">{error.email}</p>
+                <p className="text-white font-semibold text-sm">Descrição:</p>
+                <p className="text-[#00BB83] text-sm">{error.description}</p>
+                <p className="text-white font-semibold mt-2 text-sm">Email:</p>
+                <p className="text-[#00BB83] text-sm">{error.email}</p>
               </div>
             ))
           ) : (
-            <p className="text-white">Nenhum erro encontrado.</p>
+            <p className="text-white text-sm">Nenhum erro encontrado.</p>
           )}
         </div>
       </section>

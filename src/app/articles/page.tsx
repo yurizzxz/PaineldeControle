@@ -185,14 +185,14 @@ export default function Artigos() {
           Adicionar Artigo
         </Button>
 
-        <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="grid mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
           {artigos.map((artigo) => (
             <div
               key={artigo.id}
               className="bg-[#101010] p-6 gap-2 flex flex-col rounded-md border border-[#252525] relative"
             >
               <div className="flex justify-between items-start">
-                <h3 className="text-white font-bold pr-5 text-xl py-1">
+                <h3 className="text-white font-bold pr-5 text-lg py-1">
                   {artigo.title}
                 </h3>
                 <div className="flex gap-2">
@@ -216,7 +216,7 @@ export default function Artigos() {
                   {artigo.categoria}
                 </span>
               </p>
-              <p className="text-white mb-4">
+              <p className="text-white text-[0.9rem] mb-4">
                 {truncateText(artigo.desc, 100)}
               </p>
             </div>

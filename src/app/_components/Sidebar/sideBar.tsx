@@ -79,11 +79,11 @@ export default function Sidebar() {
             }`}
           >
             <Image
-              src="/logo-verde.png"
+              src="/fitpilotbg.png"
               width={100}
               height={100}
               alt="Foto do Usuário"
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-full bg-black"
             />
           </div>
           {!isCollapsed && (
@@ -100,7 +100,7 @@ export default function Sidebar() {
           <li>
             <Link
               href="/home"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-6 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Home"
             >
               <span
@@ -117,7 +117,7 @@ export default function Sidebar() {
           <li>
             <Link
               href="/gyms"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-6 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Gyms"
             >
               <span
@@ -134,7 +134,7 @@ export default function Sidebar() {
           <li>
             <Link
               href="/admins"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-6 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Adminstradoes"
             >
               <span
@@ -152,7 +152,7 @@ export default function Sidebar() {
           <li>
             <Link
               href="/notifications"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-6 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Notificações"
             >
               <span
@@ -169,7 +169,7 @@ export default function Sidebar() {
           <li>
             <Link
               href="/articles"
-              className="flex items-center space-x-7 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+              className="flex items-center space-x-6 space-y-1 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
               aria-label="Artigos"
             >
               <span
@@ -189,7 +189,7 @@ export default function Sidebar() {
       <footer className="mt-8 w-full px-4">
         <Link
           href="/login"
-          className="flex items-center space-x-7 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
+          className="flex items-center space-x-6 hover:bg-[#00BB83] hover:text-white p-2.5 rounded-lg transition-all duration-300 ease-in-out"
           aria-label="Sair"
         >
           <span

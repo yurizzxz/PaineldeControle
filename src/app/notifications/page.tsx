@@ -202,7 +202,7 @@ export default function Notifications() {
                            sm:p-4 md:p-6 lg:p-6"
                 >
                   <div className="flex justify-between items-center">
-                    <h3 className="text-white font-bold text-xl py-1">
+                    <h3 className="text-white font-bold text-lg py-1">
                       {notification.title}
                     </h3>
                     <div className="flex gap-2">
@@ -222,17 +222,17 @@ export default function Notifications() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-white py-1">{notification.subtitle}</p>
-                  <p className="text-gray-300 py-1">
+                  <p className="text-white text-md py-1">{notification.subtitle}</p>
+                  <p className="text-gray-300 text-sm py-1">
                     {notification.description}
                   </p>
-                  <p className="text-[#00BB83] font-bold flex align-center items-center gap-2 py-2">
+                  <p className="text-[#00BB83] font-bold text-md flex align-center items-center gap-2 py-2">
                     Usuário:
                   </p>
-                  <p className="text-white mb-4">
+                  <p className="text-white text-sm mb-4">
                     {notification.userAttribute}
                   </p>
-                  <p className="text-white">Data: {notification.data}</p>
+                  <p className="text-white text-md">Data: {notification.data}</p>
                 </div>
               ))}
             </div>
