@@ -37,6 +37,6 @@ Crie, edite e exclua artigos informativos no painel. Mantenha o conteúdo sempre
 4. Rode o projeto localmente com `npm run dev` ou `yarn dev`.
 5. Acesse o painel e comece a gerenciar seu aplicativo de forma rápida e eficiente.
 
----
+----
 
 Com o **Painel de Administração FitFusion**, você tem total controle sobre a gestão de academias, administradores e usuários, garantindo a excelência operacional do seu aplicativo e melhorando a experiência do seu público. Não perca tempo e comece agora a otimizar o seu sistema! 🌟

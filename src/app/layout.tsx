@@ -57,7 +57,7 @@ export default function RootLayout({
             </div>
           )}
           <div
-            className={`flex-1 ${hasPadding ? "p-[45px]" : "p-4"} overflow-auto h-full`}
+            className={`flex-1 ${hasPadding ? "p-[45px]" : ""} overflow-auto h-full`}
           >
             {children}
           </div>

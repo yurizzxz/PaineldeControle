@@ -65,7 +65,7 @@ export default function Login() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen overflow-hidden"
+      className="flex flex-col items-center justify-center min-h-screen overflow-y-hidden"
       style={{ backgroundColor: "rgb(7, 7, 7)" }}
     >
       <div className="flex flex-col items-center w-full max-w-md px-8 py-10 bg-[#101010] rounded-lg ">
